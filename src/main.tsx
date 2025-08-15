@@ -1,9 +1,9 @@
 import { ThemeProvider, extendTheme } from "@mui/material/styles";
-// import { CssBaseline } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
-import { CssBaseline } from "@mui/material";
+import { AppProvider } from "./components/app-provider/app-provider.tsx";
 
 const theme = extendTheme({
   colorSchemes: {
@@ -24,7 +24,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App />
+      <AppProvider>
+        <App />
+      </AppProvider>
     </ThemeProvider>
   </StrictMode>
 );

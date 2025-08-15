@@ -1,39 +1,34 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-
-import "./style.css";
+import { Box, Typography, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+// import { useAppContext } from "../../components/app-provider/app-context";
 import { useState } from "react";
-import { useAppContext } from "../../components/app-provider/app-context";
 
-const LoginPage = () => {
+const SignUp = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-  const { setUser } = useAppContext();
 
-  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setError(null);
     const formData = new FormData(event.target as HTMLFormElement);
+    const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    const loginResponse = await fetch("http://localhost:3000/auth/login", {
+    const SignupResponse = await fetch("http://localhost:3000/auth/sign-up", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ name, email, password }),
       credentials: "include",
     });
 
-    if (loginResponse.ok) {
-      const userData = await loginResponse.json();
-      localStorage.setItem("user", JSON.stringify(userData.user));
-      setUser(userData.user);
-      navigate("/chat");
+    if (SignupResponse.ok) {
+      navigate("/");
     } else {
-      const errorData = await loginResponse.json();
+      const errorData = await SignupResponse.json();
       setError(`${errorData.message || "Unknown error"}`);
     }
   };
@@ -41,19 +36,26 @@ const LoginPage = () => {
   return (
     <Box className="myClass">
       <Typography variant="h4" gutterBottom>
-        Login
+        Sign Up
       </Typography>
       <Box
         component="form"
         noValidate
         autoComplete="off"
-        onSubmit={handleLogin}
+        onSubmit={handleSignup}
       >
         {error && (
           <Typography color="error" variant="body2" gutterBottom>
             {error}
           </Typography>
         )}
+        <TextField
+          label="Name"
+          name="name"
+          fullWidth
+          margin="normal"
+          required
+        />
         <TextField
           label="Email"
           type="email"
@@ -77,7 +79,7 @@ const LoginPage = () => {
           fullWidth
           sx={{ mt: 2 }}
         >
-          Login
+          Sign Up
         </Button>
       </Box>
       <Button
@@ -90,11 +92,8 @@ const LoginPage = () => {
       >
         Login with Google
       </Button>
-      <Typography variant="body2" className="signup">
-        Don’t have an account? <Link to="/sign-up">Sign up</Link>
-      </Typography>
     </Box>
   );
 };
 
-export default LoginPage;
+export default SignUp;
