@@ -1,7 +1,7 @@
 import { Box, Button, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../app-provider/app-context";
-import { socket } from "../../api/socket";
+import { getRoomId, socket } from "../../api/socket";
 import type { IChatList } from "../../types/chat/chat-list.types";
 
 const ChatList = ({
@@ -14,7 +14,6 @@ const ChatList = ({
 
   useEffect(() => {
     if (user) {
-      console.log("user - ", user);
       socket.connect();
     }
   }, [user]);
@@ -31,7 +30,10 @@ const ChatList = ({
   }, []);
 
   const openChat = (userId: string) => {
-    setPrivateMessageId(userId);
+    if (!user || !user.id) return;
+    const roomId = getRoomId(user.id, userId);
+    setPrivateMessageId(roomId);
+    socket.emit("join_private_room", roomId);
   };
 
   return (

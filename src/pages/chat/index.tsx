@@ -4,7 +4,7 @@ import ChatRoom from "../../components/chat/chat-room";
 import { useState } from "react";
 
 const ChatPage = () => {
-  const [chatUserId, setChatUserId] = useState<string>("");
+  const [currentRoomId, setCurrentRoomId] = useState<string>("");
 
   const handleLogout = async () => {
     const logoutResponse = await fetch("http://localhost:3000/auth/logout", {
@@ -20,17 +20,15 @@ const ChatPage = () => {
     }
   };
 
-  const setPrivateMessageId = (userId: string) => {
-    // socket.emit("join", username);
-    setChatUserId(userId);
-    // socket.emit("join_room", userId);
+  const setPrivateMessageId = (roomId: string) => {
+    setCurrentRoomId(roomId);
   };
 
   return (
     <>
       <Button onClick={handleLogout}>Logout</Button>
       <ChatList setPrivateMessageId={setPrivateMessageId} />
-      <ChatRoom chatUserId={chatUserId} />
+      <ChatRoom currentRoomId={currentRoomId} />
     </>
   );
 };

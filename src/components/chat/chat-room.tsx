@@ -2,13 +2,24 @@ import { socket } from "../../api/socket";
 import { useEffect, useState } from "react";
 import type { IMessage } from "../../types/chat/message.types";
 
-const ChatRoom = ({ chatUserId }: { chatUserId: string }) => {
+const ChatRoom = ({ currentRoomId }: { currentRoomId: string }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
     socket.on("receive_private_message", (data: IMessage) => {
       setMessages((prev) => [...prev, `${data.from}: ${data.message}`]);
+    });
+
+    socket.on("receive_private_notification", (data: IMessage) => {
+      alert(`${data.from}\n${data.message}`);
+    });
+
+    socket.on("chat_history", (data: IMessage[]) => {
+      const oldMessages = data.map((message) => {
+        return `${message.from}: ${message.message}`;
+      });
+      setMessages(oldMessages);
     });
 
     return () => {
@@ -18,7 +29,10 @@ const ChatRoom = ({ chatUserId }: { chatUserId: string }) => {
   }, []);
 
   const sendPrivateMessage = () => {
-    socket.emit("private_message", { toUserId: chatUserId, message: message });
+    socket.emit("private_message", {
+      toPrivateRoom: currentRoomId,
+      message: message,
+    });
     setMessage("");
   };
 
