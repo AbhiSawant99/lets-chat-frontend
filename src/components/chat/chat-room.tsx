@@ -1,13 +1,13 @@
 import { socket } from "../../api/socket";
 import { useEffect, useState } from "react";
+import type { IMessage } from "../../types/chat/message.types";
 
 const ChatRoom = ({ chatUserId }: { chatUserId: string }) => {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
-    socket.on("receive_private_message", (data) => {
-      console.log("data - ", data);
+    socket.on("receive_private_message", (data: IMessage) => {
       setMessages((prev) => [...prev, `${data.from}: ${data.message}`]);
     });
 

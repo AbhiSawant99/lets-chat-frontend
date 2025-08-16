@@ -2,13 +2,14 @@ import { Box, Button, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../app-provider/app-context";
 import { socket } from "../../api/socket";
+import type { IChatList } from "../../types/chat/chat-list.types";
 
 const ChatList = ({
   setPrivateMessageId,
 }: {
   setPrivateMessageId: (userId: string) => void;
 }) => {
-  const [chatList, setChatList] = useState([]);
+  const [chatList, setChatList] = useState<IChatList[]>([]);
   const { user } = useAppContext();
 
   useEffect(() => {
