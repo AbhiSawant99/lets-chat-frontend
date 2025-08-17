@@ -1,0 +1,45 @@
+.message-container {
+  display: flex;
+  margin-bottom: 0.5rem;
+  padding: 6px 10px;
+}
+
+.message-container-self {
+  justify-content: end;
+}
+
+.message-container-other {
+  justify-content: start;
+}
+
+.message-self {
+  text-align: right;
+  padding-bottom: 0 !important;
+  border-radius: 1rem !important;
+}
+
+.message-other {
+  background: #f0f0f0 !important;
+  padding-bottom: 0 !important;
+  border-radius: 1rem !important;
+  position: relative;
+}
+
+.message-other::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 10px;
+  border: 8px solid transparent;
+  border-right-color: #eee;
+}
+
+.message-timestamp {
+  text-align: right;
+  color: #808080;
+}
+
+.message-content {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.25rem !important;
+}

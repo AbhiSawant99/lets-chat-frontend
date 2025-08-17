@@ -8,8 +8,8 @@ export interface IAppContext {
 }
 
 export interface AuthUser {
-  id?: string;
-  displayName?: string;
+  id: string;
+  displayName: string;
   emails?: { value: string }[];
   photos?: { value: string }[];
 }

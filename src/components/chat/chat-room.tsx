@@ -1,14 +1,36 @@
 import { socket } from "../../api/socket";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { IMessage } from "../../types/chat/message.types";
+import { Box, Button, Card, TextField, Typography } from "@mui/material";
+import "./styles.css";
+import type { IChat } from "../../types/chat/chat.types";
+import SendIcon from "@mui/icons-material/Send";
+import ChatMessage from "./chat-message";
+import { useAppContext } from "../app-provider/app-context";
 
-const ChatRoom = ({ currentRoomId }: { currentRoomId: string }) => {
+const ChatRoom = ({
+  currentRoomId,
+  currentChat,
+}: {
+  currentRoomId: string;
+  currentChat: IChat;
+}) => {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [typing, setTyping] = useState<string[]>([]);
+  const chatBoxRef = useRef<HTMLDivElement | null>(null);
+  const { user } = useAppContext();
+  let typingTimeout: ReturnType<typeof setTimeout>;
 
   useEffect(() => {
     socket.on("receive_private_message", (data: IMessage) => {
-      setMessages((prev) => [...prev, `${data.from}: ${data.message}`]);
+      setMessages((prev) => [...prev, data]);
+
+      setTimeout(() => {
+        if (chatBoxRef.current) {
+          chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+      }, 500);
     });
 
     socket.on("receive_private_notification", (data: IMessage) => {
@@ -16,15 +38,32 @@ const ChatRoom = ({ currentRoomId }: { currentRoomId: string }) => {
     });
 
     socket.on("chat_history", (data: IMessage[]) => {
-      const oldMessages = data.map((message) => {
-        return `${message.from}: ${message.message}`;
+      setMessages(data);
+      setTimeout(() => {
+        if (chatBoxRef.current) {
+          chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+      }, 500);
+    });
+
+    socket.on("typing", (username: string) => {
+      setTyping((prev) => {
+        if (prev.includes(username)) return prev;
+        return [...prev, username];
       });
-      setMessages(oldMessages);
+    });
+
+    socket.on("stopTyping", (username: string) => {
+      //todo: need to fix
+      setTyping((prev) => prev.filter((u) => u !== username));
     });
 
     return () => {
       socket.off("receive_message");
       socket.off("receive_private_message");
+      socket.off("chat_history");
+      socket.off("typing");
+      socket.off("stopTyping");
     };
   }, []);
 
@@ -36,32 +75,65 @@ const ChatRoom = ({ currentRoomId }: { currentRoomId: string }) => {
     setMessage("");
   };
 
+  const messageChangeHandle = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    socket.emit("typing", {
+      roomId: currentRoomId,
+      username: user?.displayName,
+    });
+    setMessage(e.target.value);
+
+    if (typingTimeout) clearTimeout(typingTimeout);
+
+    // start a new timer — if no key pressed for 1.5 sec → send "stopTyping"
+    typingTimeout = setTimeout(() => {
+      socket.emit("stopTyping", user?.displayName);
+    }, 1500);
+  };
+
   return (
-    <div>
-      <h2>Socket.IO Chat</h2>
-      {/* <input
-        placeholder="Your name"
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input placeholder="Room" onChange={(e) => setRoom(e.target.value)} />
-      <button onClick={joinRoom}>Join Room</button> */}
-
-      <div>
-        <input
-          placeholder="Message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button onClick={sendPrivateMessage}>Send Message</button>
-      </div>
-
-      <div>
-        <h3>Messages:</h3>
-        {messages.map((m, i) => (
-          <p key={i}>{m}</p>
+    <Card className="chat-room-card" elevation={0}>
+      <Box className="chat-room-header">
+        <Typography variant="h6">
+          {currentChat.username ?? "Select Chat"}
+        </Typography>
+      </Box>
+      <Box ref={chatBoxRef} id="chatBox" className="chat-box">
+        {messages.map((message) => (
+          <ChatMessage key={message.id} message={message} />
         ))}
+      </Box>
+
+      <div>
+        {typing.length > 0 ? <p>{typing.join(" ")} typing...</p> : <p>HERE</p>}
+        <div className="chat-room-action">
+          <TextField
+            name="messageInput"
+            placeholder="Message"
+            value={message}
+            onChange={(e) => messageChangeHandle(e)}
+            className="chat-input"
+            multiline
+            maxRows={4}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "1rem",
+              },
+            }}
+          />
+
+          <Button
+            onClick={sendPrivateMessage}
+            variant="contained"
+            sx={{ borderRadius: "1rem" }}
+            disableElevation
+          >
+            <SendIcon />
+          </Button>
+        </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

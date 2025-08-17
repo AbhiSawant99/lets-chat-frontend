@@ -1,0 +1,42 @@
+.chat-list-card {
+  display: block;
+  width: 25%;
+}
+
+.user-heading {
+  padding: 1rem;
+}
+
+.chat-room-card {
+  display: block;
+  width: 75%;
+  border-radius: 1rem !important;
+}
+
+.chat-input {
+  width: -webkit-fill-available;
+}
+
+.chat-room-action {
+  display: flex;
+  height: 4rem;
+  padding: 0.25rem;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.chat-room-action button {
+  height: 100%;
+}
+
+.chat-box {
+  height: calc(100vh - 9.25rem);
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.chat-room-header {
+  padding: 1rem;
+  background-color: var(--mui-palette-primary-main) !important;
+  color: #ffffff;
+}

@@ -1,0 +1,8 @@
+.chat-card {
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.chat-card:hover {
+  background-color: var(--mui-palette-back-main);
+}

@@ -1,35 +1,29 @@
-import { Button } from "@mui/material";
+import { useState } from "react";
 import ChatList from "../../components/chat/chat-list";
 import ChatRoom from "../../components/chat/chat-room";
-import { useState } from "react";
+import Layout from "../../components/layout";
+import "./style.css";
+import type { IChat } from "../../types/chat/chat.types";
 
 const ChatPage = () => {
   const [currentRoomId, setCurrentRoomId] = useState<string>("");
-
-  const handleLogout = async () => {
-    const logoutResponse = await fetch("http://localhost:3000/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    if (logoutResponse.ok) {
-      localStorage.removeItem("user");
-      window.location.href = "/";
-    } else {
-      console.error("Logout failed");
-    }
-  };
+  const [currentChat, setCurrentChat] = useState<IChat>({} as IChat);
 
   const setPrivateMessageId = (roomId: string) => {
     setCurrentRoomId(roomId);
   };
 
   return (
-    <>
-      <Button onClick={handleLogout}>Logout</Button>
-      <ChatList setPrivateMessageId={setPrivateMessageId} />
-      <ChatRoom currentRoomId={currentRoomId} />
-    </>
+    <Layout>
+      <div className="chat-page">
+        <ChatList
+          setPrivateMessageId={setPrivateMessageId}
+          setCurrentChat={setCurrentChat}
+          currentChat={currentChat}
+        />
+        <ChatRoom currentRoomId={currentRoomId} currentChat={currentChat} />
+      </div>
+    </Layout>
   );
 };
 

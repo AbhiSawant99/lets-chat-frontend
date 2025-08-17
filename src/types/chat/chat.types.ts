@@ -1,4 +1,4 @@
-export interface IChatList {
+export interface IChat {
   id: string;
   username: string;
   userId: string;

@@ -5,6 +5,14 @@ export const socket = io("http://localhost:3000", {
   autoConnect: false,
 });
 
+socket.on("connect_error", (err) => {
+  if (err.message === "TokenExpired") {
+    alert("Session expired. Please login again.");
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  }
+});
+
 export const getRoomId = (senderId: string, receiverId: string) => {
   //todo: will go in utils
   const roomids = [senderId, receiverId].sort();

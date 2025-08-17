@@ -15,7 +15,7 @@ const ProfilePage = () => {
 
         if (!res.ok) {
           setUserDetails(null);
-          navigate("/login", { replace: true }); // replace history
+          navigate("/", { replace: true }); // replace history
           return;
         }
 

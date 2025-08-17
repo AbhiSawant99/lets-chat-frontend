@@ -1,14 +1,12 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 
 import "./style.css";
 import { useState } from "react";
-import { useAppContext } from "../../components/app-provider/app-context";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-  const { setUser } = useAppContext();
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,7 +28,6 @@ const LoginPage = () => {
     if (loginResponse.ok) {
       const userData = await loginResponse.json();
       localStorage.setItem("user", JSON.stringify(userData.user));
-      setUser(userData.user);
       navigate("/chat");
     } else {
       const errorData = await loginResponse.json();
@@ -39,60 +36,62 @@ const LoginPage = () => {
   };
 
   return (
-    <Box className="myClass">
-      <Typography variant="h4" gutterBottom>
-        Login
-      </Typography>
-      <Box
-        component="form"
-        noValidate
-        autoComplete="off"
-        onSubmit={handleLogin}
-      >
-        {error && (
-          <Typography color="error" variant="body2" gutterBottom>
-            {error}
-          </Typography>
-        )}
-        <TextField
-          label="Email"
-          type="email"
-          name="email"
-          fullWidth
-          margin="normal"
-          required
-        />
-        <TextField
-          label="Password"
-          type="password"
-          name="password"
-          fullWidth
-          margin="normal"
-          required
-        />
+    <Box>
+      <Card variant="outlined" className="login-card">
+        <Typography variant="h4" gutterBottom>
+          Login
+        </Typography>
+        <Box
+          component="form"
+          noValidate
+          autoComplete="off"
+          onSubmit={handleLogin}
+        >
+          {error && (
+            <Typography color="error" variant="body2" gutterBottom>
+              {error}
+            </Typography>
+          )}
+          <TextField
+            label="Email"
+            type="email"
+            name="email"
+            fullWidth
+            margin="normal"
+            required
+          />
+          <TextField
+            label="Password"
+            type="password"
+            name="password"
+            fullWidth
+            margin="normal"
+            required
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Login
+          </Button>
+        </Box>
         <Button
-          variant="contained"
-          color="primary"
-          type="submit"
+          href="http://localhost:3000/auth/google"
+          variant="outlined"
+          color="info"
+          type="button"
           fullWidth
           sx={{ mt: 2 }}
         >
-          Login
+          Login with Google
         </Button>
-      </Box>
-      <Button
-        href="http://localhost:3000/auth/google"
-        variant="outlined"
-        color="info"
-        type="button"
-        fullWidth
-        sx={{ mt: 2 }}
-      >
-        Login with Google
-      </Button>
-      <Typography variant="body2" className="signup">
-        Don’t have an account? <Link to="/sign-up">Sign up</Link>
-      </Typography>
+        <Typography variant="body2" className="signup">
+          Don’t have an account? <Link to="/sign-up">Sign up</Link>
+        </Typography>
+      </Card>
     </Box>
   );
 };
