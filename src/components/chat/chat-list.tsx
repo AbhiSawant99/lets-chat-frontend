@@ -61,7 +61,7 @@ const ChatList = ({
   };
 
   return (
-    <Card className="chat-list-card">
+    <Card className="chat-list-card" sx={{ width: { xs: "100%", md: "30%" } }}>
       <div>
         <TextField
           type="text"
@@ -88,7 +88,7 @@ const ChatList = ({
           }}
         />
       </div>
-      <Stack gap="0.25rem" py="1rem">
+      <Stack className="chat-list">
         {chatList.length > 0 &&
           chatList
             .filter((c) => {

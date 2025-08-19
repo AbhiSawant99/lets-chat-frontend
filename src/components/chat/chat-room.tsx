@@ -116,7 +116,10 @@ const ChatRoom = ({
   };
 
   return (
-    <Card className="chat-room-card">
+    <Card
+      className="chat-room-card"
+      sx={{ width: { xs: "100%", md: "  70%" } }}
+    >
       <Box className="chat-room-header">
         {currentChat.username ? (
           <Avatar

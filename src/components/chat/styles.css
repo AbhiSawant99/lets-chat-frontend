@@ -1,6 +1,5 @@
 .chat-list-card {
   display: block;
-  width: 30%;
   border-radius: 1rem !important;
   padding: 1rem;
 }
@@ -17,7 +16,6 @@
 
 .chat-room-card {
   display: block;
-  width: 70%;
   border-radius: 1rem !important;
 }
 
@@ -26,6 +24,13 @@
   background-color: var(--mui-palette-back-dark);
   color: var(--mui-palette-foreground-main);
   border-radius: 0 0 1rem 1rem !important;
+}
+
+.chat-list {
+  gap: 0.25rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  height: calc(100vh - 7rem);
 }
 
 .chat-room-action {

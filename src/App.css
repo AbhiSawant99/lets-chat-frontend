@@ -6,6 +6,31 @@ body {
   background-color: var(--mui-palette-back-main) !important;
 }
 
+.layout-navigation-parent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.layout-navigation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.layout-buttons {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.layout-logo {
+  width: 2rem;
+  height: 2rem;
+  margin: 0 auto;
+}
+
 .custom-scroll {
   overflow-y: auto;
   height: 400px;
