@@ -16,27 +16,35 @@
   text-align: right;
   padding-bottom: 0 !important;
   border-radius: 1rem !important;
+  background-color: var(--mui-palette-messageSelf-background) !important;
+  color: var(--mui-palette-messageSelf-text) !important;
 }
 
 .message-other {
-  background: #f0f0f0 !important;
+  background: var(--mui-palette-messageOther-background) !important;
+  color: var(--mui-palette-messageOther-text) !important;
   padding-bottom: 0 !important;
   border-radius: 1rem !important;
   position: relative;
 }
 
-.message-other::after {
+/* .message-other::after {
   content: "";
   position: absolute;
   left: -8px;
   top: 10px;
   border: 8px solid transparent;
   border-right-color: #eee;
+} */
+
+.message-other .message-timestamp {
+  text-align: right;
+  color: var(--mui-palette-messageOther-subtext);
 }
 
-.message-timestamp {
+.message-self .message-timestamp {
   text-align: right;
-  color: #808080;
+  color: var(--mui-palette-messageSelf-subtext);
 }
 
 .message-content {

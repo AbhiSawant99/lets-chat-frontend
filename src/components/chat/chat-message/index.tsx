@@ -14,6 +14,7 @@ const ChatMessage = ({ message }: { message: IMessage }) => {
     >
       <Card
         className={`${user?.displayName === message.from ? "message-self" : "message-other"}`}
+        elevation={0}
       >
         <CardContent className="message-content">
           <Typography variant="body2">{message.message}</Typography>

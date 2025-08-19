@@ -5,3 +5,43 @@
 body {
   background-color: var(--mui-palette-back-main) !important;
 }
+
+.custom-scroll {
+  overflow-y: auto;
+  height: 400px;
+
+  /* firefox */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+  -ms-overflow-style: none;
+}
+.custom-scroll::-ms-scrollbar {
+  display: none;
+}
+
+/* chrome / edge / safari */
+.custom-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* hide both top (start) and bottom (end) buttons */
+.custom-scroll::-webkit-scrollbar-button:start:decrement,
+.custom-scroll::-webkit-scrollbar-button:end:increment {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-scroll:hover {
+  scrollbar-color: #b6b6b6 transparent;
+}
+.custom-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: #b6b6b6;
+}

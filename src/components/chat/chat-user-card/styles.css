@@ -1,6 +1,14 @@
 .chat-card {
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 1rem !important;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.current-chat {
+  background-color: var(--mui-palette-back-dark) !important;
 }
 
 .chat-card:hover {

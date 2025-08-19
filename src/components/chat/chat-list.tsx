@@ -1,9 +1,10 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Card, InputAdornment, Stack, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../app-provider/app-context";
 import { getRoomId, socket } from "../../api/socket";
 import type { IChat } from "../../types/chat/chat.types";
 import ChatUsersCard from "./chat-user-card";
+import SearchIcon from "@mui/icons-material/Search";
 
 const ChatList = ({
   setPrivateMessageId,
@@ -15,6 +16,7 @@ const ChatList = ({
   currentChat: IChat;
 }) => {
   const [chatList, setChatList] = useState<IChat[]>([]);
+  const [search, setSearch] = useState<string | null>(null);
   const { user } = useAppContext();
   const hasConnectedRef = useRef(false);
 
@@ -59,20 +61,56 @@ const ChatList = ({
   };
 
   return (
-    <div className="chat-list-card">
-      {user && (
-        <Box className="user-heading">
-          <Typography variant="h5">{user.displayName}</Typography>
-        </Box>
-      )}
-      {/* {user && <h3>User: </h3>} */}
-      <Stack gap="1rem" px="1rem">
+    <Card className="chat-list-card">
+      <div>
+        <TextField
+          type="text"
+          className="chat-list-search"
+          placeholder="Search a chat"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            },
+          }}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "2rem",
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "transparent",
+            },
+          }}
+        />
+      </div>
+      <Stack gap="0.25rem" py="1rem">
         {chatList.length > 0 &&
-          chatList.map((chat) => (
-            <ChatUsersCard chat={chat} onClick={() => openChat(chat)} />
-          ))}
+          chatList
+            .filter((c) => {
+              if (search && search.length > 0) {
+                return c.username
+                  .trim()
+                  .toLocaleLowerCase()
+                  .includes(search.trim().toLocaleLowerCase());
+              } else {
+                return true;
+              }
+            })
+            .map((chat, index) => (
+              <ChatUsersCard
+                chat={chat}
+                onClick={() => openChat(chat)}
+                self={index === 0}
+                currentChat={chat.userId === currentChat.userId}
+              />
+            ))}
       </Stack>
-    </div>
+    </Card>
   );
 };
 

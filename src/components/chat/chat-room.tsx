@@ -1,12 +1,21 @@
 import { socket } from "../../api/socket";
 import { useEffect, useRef, useState } from "react";
 import type { IMessage } from "../../types/chat/message.types";
-import { Box, Button, Card, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import "./styles.css";
 import type { IChat } from "../../types/chat/chat.types";
 import SendIcon from "@mui/icons-material/Send";
 import ChatMessage from "./chat-message";
 import { useAppContext } from "../app-provider/app-context";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 
 const ChatRoom = ({
   currentRoomId,
@@ -21,6 +30,18 @@ const ChatRoom = ({
   const chatBoxRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAppContext();
   let typingTimeout: ReturnType<typeof setTimeout>;
+
+  const [showTyping, setShowTyping] = useState(false);
+
+  useEffect(() => {
+    if (typing.length > 0) {
+      setShowTyping(true);
+    } else {
+      // Give the exit animation time to finish (e.g., 300ms)
+      const timeout = setTimeout(() => setShowTyping(false), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [typing]);
 
   useEffect(() => {
     socket.on("receive_private_message", (data: IMessage) => {
@@ -54,7 +75,6 @@ const ChatRoom = ({
     });
 
     socket.on("stopTyping", (username: string) => {
-      //todo: need to fix
       setTyping((prev) => prev.filter((u) => u !== username));
     });
 
@@ -88,49 +108,91 @@ const ChatRoom = ({
 
     // start a new timer — if no key pressed for 1.5 sec → send "stopTyping"
     typingTimeout = setTimeout(() => {
-      socket.emit("stopTyping", user?.displayName);
+      socket.emit("stopTyping", {
+        roomId: currentRoomId,
+        username: user?.displayName,
+      });
     }, 1500);
   };
 
   return (
-    <Card className="chat-room-card" elevation={0}>
+    <Card className="chat-room-card">
       <Box className="chat-room-header">
+        {currentChat.username ? (
+          <Avatar
+            alt={currentChat.username}
+            src="/broken-image.jpg"
+            sx={{ width: "3.125rem", height: "3.125rem" }}
+          >
+            <PersonRoundedIcon sx={{ fontSize: "1.75rem" }} />
+          </Avatar>
+        ) : null}
         <Typography variant="h6">
-          {currentChat.username ?? "Select Chat"}
+          {currentChat.username
+            ? `${currentChat.username} ${currentChat.userId === user?.id ? "(You)" : ""}`
+            : "Select Chat"}
         </Typography>
       </Box>
-      <Box ref={chatBoxRef} id="chatBox" className="chat-box">
+      <Box ref={chatBoxRef} id="chatBox" className="chat-box custom-scroll">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
       </Box>
 
-      <div>
-        {typing.length > 0 ? <p>{typing.join(" ")} typing...</p> : <p>HERE</p>}
+      <div className="chat-bottom">
+        {showTyping ? (
+          <Typography
+            variant="caption"
+            className={`typing-text ${typing.length > 0 ? "" : "typing-exit"}`}
+          >
+            {typing.join(" ")} typing...
+          </Typography>
+        ) : null}
         <div className="chat-room-action">
           <TextField
             name="messageInput"
-            placeholder="Message"
+            placeholder="Type your message..."
             value={message}
             onChange={(e) => messageChangeHandle(e)}
             className="chat-input"
             multiline
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      onClick={sendPrivateMessage}
+                      variant="contained"
+                      sx={{ borderRadius: "2rem" }}
+                      disableElevation
+                      disabled={!message}
+                      className="message-sent"
+                    >
+                      <SendIcon />
+                    </Button>
+                  </InputAdornment>
+                ),
+              },
+            }}
             maxRows={4}
             sx={{
               "& .MuiOutlinedInput-root": {
-                borderRadius: "1rem",
+                borderRadius: "0 0 1rem 1rem",
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "transparent",
               },
             }}
           />
 
-          <Button
+          {/* <Button
             onClick={sendPrivateMessage}
             variant="contained"
             sx={{ borderRadius: "1rem" }}
             disableElevation
           >
             <SendIcon />
-          </Button>
+          </Button> */}
         </div>
       </div>
     </Card>
