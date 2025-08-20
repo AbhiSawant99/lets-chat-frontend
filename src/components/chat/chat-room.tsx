@@ -187,15 +187,6 @@ const ChatRoom = ({
               },
             }}
           />
-
-          {/* <Button
-            onClick={sendPrivateMessage}
-            variant="contained"
-            sx={{ borderRadius: "1rem" }}
-            disableElevation
-          >
-            <SendIcon />
-          </Button> */}
         </div>
       </div>
     </Card>

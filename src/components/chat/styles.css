@@ -30,7 +30,14 @@
   gap: 0.25rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  height: calc(100vh - 7rem);
+  height: calc(100vh - 10.5rem);
+}
+
+.chat-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .chat-room-action {

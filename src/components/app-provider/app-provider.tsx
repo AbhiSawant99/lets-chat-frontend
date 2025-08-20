@@ -3,12 +3,14 @@ import {
   AppContext,
   type AuthUser,
 } from "../../types/app-provider/app-context";
+import { useNavigate } from "react-router-dom";
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<AuthUser | undefined>();
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -27,6 +29,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
         console.error(err);
         setUser(undefined);
         localStorage.removeItem("user");
+        navigate("/");
       }
     };
 

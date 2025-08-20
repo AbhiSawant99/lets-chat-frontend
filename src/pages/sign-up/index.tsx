@@ -1,6 +1,5 @@
-import { Box, Typography, TextField, Button } from "@mui/material";
+import { Box, Typography, TextField, Button, Card } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-// import { useAppContext } from "../../components/app-provider/app-context";
 import { useState } from "react";
 
 const SignUp = () => {
@@ -34,64 +33,48 @@ const SignUp = () => {
   };
 
   return (
-    <Box className="myClass">
-      <Typography variant="h4" gutterBottom>
-        Sign Up
-      </Typography>
-      <Box
-        component="form"
-        noValidate
-        autoComplete="off"
-        onSubmit={handleSignup}
-      >
-        {error && (
-          <Typography color="error" variant="body2" gutterBottom>
-            {error}
+    <Box className="login-container">
+      <Box className="login-wrapper">
+        <Card className="logo-circle">
+          <img src="/logo.png" alt="logo" />
+        </Card>
+        <Card className="login-card">
+          <Typography variant="h4" className="login-title">
+            Sign Up
           </Typography>
-        )}
-        <TextField
-          label="Name"
-          name="name"
-          fullWidth
-          margin="normal"
-          required
-        />
-        <TextField
-          label="Email"
-          type="email"
-          name="email"
-          fullWidth
-          margin="normal"
-          required
-        />
-        <TextField
-          label="Password"
-          type="password"
-          name="password"
-          fullWidth
-          margin="normal"
-          required
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          fullWidth
-          sx={{ mt: 2 }}
-        >
-          Sign Up
-        </Button>
+          <Box
+            component="form"
+            noValidate
+            autoComplete="off"
+            onSubmit={handleSignup}
+            className="form-container"
+          >
+            {error && (
+              <Typography color="error" variant="body2">
+                {error}
+              </Typography>
+            )}
+            <TextField label="Name" name="name" fullWidth required />
+            <TextField
+              label="Email"
+              type="email"
+              name="email"
+              fullWidth
+              required
+            />
+            <TextField
+              label="Password"
+              type="password"
+              name="password"
+              fullWidth
+              required
+            />
+            <Button variant="contained" color="primary" type="submit" fullWidth>
+              Sign Up
+            </Button>
+          </Box>
+        </Card>
       </Box>
-      <Button
-        href="http://localhost:3000/auth/google"
-        variant="outlined"
-        color="info"
-        type="button"
-        fullWidth
-        sx={{ mt: 2 }}
-      >
-        Login with Google
-      </Button>
     </Box>
   );
 };

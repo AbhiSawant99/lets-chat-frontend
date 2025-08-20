@@ -1,10 +1,18 @@
-import { Card, InputAdornment, Stack, TextField } from "@mui/material";
+import {
+  Card,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../app-provider/app-context";
 import { getRoomId, socket } from "../../api/socket";
 import type { IChat } from "../../types/chat/chat.types";
 import ChatUsersCard from "./chat-user-card";
 import SearchIcon from "@mui/icons-material/Search";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const ChatList = ({
   setPrivateMessageId,
@@ -42,9 +50,6 @@ const ChatList = ({
         }
       );
       setChatList(sortedChats);
-      if (!currentChat.id && user) {
-        openChat(sortedChats[0]);
-      }
     });
 
     return () => {
@@ -62,6 +67,13 @@ const ChatList = ({
 
   return (
     <Card className="chat-list-card" sx={{ width: { xs: "100%", md: "30%" } }}>
+      <div className="chat-list-header">
+        <Typography variant="h5">LetsChat</Typography>
+        <IconButton aria-label="add-friend" color="primary">
+          {" "}
+          <AddCircleIcon />
+        </IconButton>
+      </div>
       <div>
         <TextField
           type="text"

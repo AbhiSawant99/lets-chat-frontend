@@ -6,6 +6,7 @@ import "./style.css";
 import type { IChat } from "../../types/chat/chat.types";
 import StickyChatDrawer from "../../components/swipable-drawer";
 import { useMediaQuery, useTheme } from "@mui/material";
+import SelectChat from "../../components/chat/select-chat";
 
 const ChatPage = () => {
   const [currentRoomId, setCurrentRoomId] = useState<string>("");
@@ -25,10 +26,11 @@ const ChatPage = () => {
           setCurrentChat={setCurrentChat}
           currentChat={currentChat}
         />
-        {!isSmall && (
+        {!isSmall && currentChat?.userId && (
           <ChatRoom currentRoomId={currentRoomId} currentChat={currentChat} />
         )}
-        {isSmall && (
+        {!isSmall && !currentChat?.userId && <SelectChat />}
+        {isSmall && currentChat?.userId && (
           <StickyChatDrawer
             children={
               <ChatRoom
