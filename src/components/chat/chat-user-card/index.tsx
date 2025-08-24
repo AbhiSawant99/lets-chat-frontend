@@ -1,18 +1,21 @@
-import { Avatar, Typography } from "@mui/material";
+import { Avatar, Badge, Typography } from "@mui/material";
 import "./styles.css";
 import type { IChat } from "../../../types/chat/chat.types";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import type { AuthUser } from "../../../types/app-provider/app-context";
 
 const ChatUsersCard = ({
   chat,
   onClick,
   self,
   currentChat,
+  user,
 }: {
   chat: IChat;
   onClick: () => void;
   self?: boolean;
   currentChat?: boolean;
+  user?: AuthUser;
 }) => {
   return (
     <div
@@ -20,23 +23,43 @@ const ChatUsersCard = ({
       onClick={onClick}
     >
       <div>
-        <Avatar
-          alt={chat.username}
-          src="/broken-image.jpg"
-          sx={{ width: "3.125rem", height: "3.125rem" }}
+        <Badge
+          overlap="circular"
+          variant="dot"
+          color="success"
+          invisible={!chat.online}
         >
-          <PersonRoundedIcon sx={{ fontSize: "1.75rem" }} />
-        </Avatar>
+          <Avatar
+            alt={chat.username}
+            src="/broken-image.jpg"
+            sx={{ width: "3.125rem", height: "3.125rem" }}
+          >
+            <PersonRoundedIcon sx={{ fontSize: "1.75rem" }} />
+          </Avatar>
+        </Badge>
       </div>
       <div>
         <Typography
           variant="body1"
-          sx={{ m: 0, lineHeight: 1, fontWeight: 500 }}
+          sx={{
+            m: 0,
+            lineHeight: 1,
+            fontWeight: `${user?.id && chat.lastMessage?.readBy && !chat.lastMessage?.readBy?.includes(user?.id) ? 900 : 500}`,
+          }}
         >
           {chat.username} {self && `(You)`}
         </Typography>
         {chat.lastMessage ? (
-          <Typography variant="caption">{chat.lastMessage.message}</Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              m: 0,
+              lineHeight: 0,
+              fontWeight: `${user?.id && chat.lastMessage?.readBy && !chat.lastMessage?.readBy?.includes(user?.id) ? 900 : 500}`,
+            }}
+          >
+            {chat.lastMessage.message}
+          </Typography>
         ) : (
           <Typography variant="caption" sx={{ m: 0, lineHeight: 0 }}>
             Start Chatting

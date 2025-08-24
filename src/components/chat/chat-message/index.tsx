@@ -3,8 +3,9 @@ import type { IMessage } from "../../../types/chat/message.types";
 import { DateTime } from "luxon";
 import "./styles.css";
 import { useAppContext } from "../../app-provider/app-context";
+import React from "react";
 
-const ChatMessage = ({ message }: { message: IMessage }) => {
+const ChatMessage = React.memo(({ message }: { message: IMessage }) => {
   const date = DateTime.fromISO(message.createdAt).toFormat("dd LLLL, HH:mm");
   const { user } = useAppContext();
 
@@ -25,11 +26,19 @@ const ChatMessage = ({ message }: { message: IMessage }) => {
             >
               {date}
             </Typography>
+            {user?.displayName === message.from && (
+              <Typography
+                variant="caption"
+                sx={{ fontSize: "0.6rem", letterSpacing: "0", ml: "0.25rem" }}
+              >
+                {message.status}
+              </Typography>
+            )}
           </div>
         </CardContent>
       </Card>
     </div>
   );
-};
+});
 
 export default ChatMessage;

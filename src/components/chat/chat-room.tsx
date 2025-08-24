@@ -44,27 +44,55 @@ const ChatRoom = ({
   }, [typing]);
 
   useEffect(() => {
-    socket.on("receive_private_message", (data: IMessage) => {
-      setMessages((prev) => [...prev, data]);
+    socket.on("receive_private_message", (message: IMessage) => {
+      setMessages((prev) => [...prev, message]);
 
       setTimeout(() => {
         if (chatBoxRef.current) {
           chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
         }
       }, 500);
+
+      socket.emit("mark_message_seen", {
+        toPrivateRoom: currentRoomId,
+        message: message,
+      });
     });
 
-    socket.on("receive_private_notification", (data: IMessage) => {
-      alert(`${data.from}\n${data.message}`);
+    socket.on("message_seen", (message: IMessage) => {
+      setMessages((prev) =>
+        prev.map((oldmessage) =>
+          oldmessage.id === message.id ? { ...message } : oldmessage
+        )
+      );
     });
 
-    socket.on("chat_history", (data: IMessage[]) => {
-      setMessages(data);
+    socket.on("chat_history", (message: IMessage[]) => {
+      setMessages(message);
       setTimeout(() => {
         if (chatBoxRef.current) {
           chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
         }
       }, 500);
+
+      socket.emit("mark_history_message_seen", {
+        toPrivateRoom: currentRoomId,
+      });
+    });
+
+    socket.on("history_message_seen", (messages: IMessage[]) => {
+      setMessages((prev) =>
+        prev.map((oldMessage) => {
+          const messageToReplace = messages.find(
+            (message) => message.id === oldMessage.id
+          );
+          if (messageToReplace) {
+            return messageToReplace;
+          } else {
+            return oldMessage;
+          }
+        })
+      );
     });
 
     socket.on("typing", (username: string) => {
@@ -79,7 +107,6 @@ const ChatRoom = ({
     });
 
     return () => {
-      socket.off("receive_message");
       socket.off("receive_private_message");
       socket.off("chat_history");
       socket.off("typing");
