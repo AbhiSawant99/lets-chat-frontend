@@ -12,9 +12,3 @@ socket.on("connect_error", (err) => {
     window.location.href = "/";
   }
 });
-
-export const getRoomId = (senderId: string, receiverId: string) => {
-  //todo: will go in utils
-  const roomids = [senderId, receiverId].sort();
-  return `room_${roomids[0]}_${roomids[1]}`;
-};

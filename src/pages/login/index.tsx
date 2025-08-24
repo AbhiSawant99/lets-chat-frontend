@@ -44,64 +44,6 @@ const LoginPage = () => {
   };
 
   return (
-    // <Box className="login-container">
-    //   <Card variant="outlined" className="login-card">
-    //     <Typography variant="h4" gutterBottom>
-    //       Log In
-    //     </Typography>
-    //     <Box
-    //       component="form"
-    //       noValidate
-    //       autoComplete="off"
-    //       onSubmit={handleLogin}
-    //     >
-    //       {error && (
-    //         <Typography color="error" variant="body2" gutterBottom>
-    //           {error}
-    //         </Typography>
-    //       )}
-    //       <TextField
-    //         label="Email"
-    //         type="email"
-    //         name="email"
-    //         fullWidth
-    //         margin="normal"
-    //         required
-    //       />
-    //       <TextField
-    //         label="Password"
-    //         type="password"
-    //         name="password"
-    //         fullWidth
-    //         margin="normal"
-    //         required
-    //       />
-    //       <Button
-    //         variant="contained"
-    //         color="primary"
-    //         type="submit"
-    //         fullWidth
-    //         sx={{ mt: 2 }}
-    //       >
-    //         Login
-    //       </Button>
-    //     </Box>
-    //     <Button
-    //       href="http://localhost:3000/auth/google"
-    //       variant="outlined"
-    //       color="info"
-    //       type="button"
-    //       fullWidth
-    //       sx={{ mt: 2 }}
-    //     >
-    //       Login with Google
-    //     </Button>
-    //     <Typography variant="body2" className="signup">
-    //       Don’t have an account? <Link to="/sign-up">Sign up</Link>
-    //     </Typography>
-    //   </Card>
-    // </Box>
-
     <Box className="login-container">
       {/* decorative background image top-left */}
       <img src="/logo.png" className="bg-img top-left" alt="bg" />

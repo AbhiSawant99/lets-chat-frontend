@@ -34,6 +34,11 @@ const SignUp = () => {
 
   return (
     <Box className="login-container">
+      {/* decorative background image top-left */}
+      <img src="/logo.png" className="bg-img top-left" alt="bg" />
+
+      {/* decorative background image bottom-right */}
+      <img src="/logo.png" className="bg-img bottom-right" alt="bg" />
       <Box className="login-wrapper">
         <Card className="logo-circle">
           <img src="/logo.png" alt="logo" />

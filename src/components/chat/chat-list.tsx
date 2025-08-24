@@ -8,12 +8,15 @@ import {
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../app-provider/app-context";
-import { getRoomId, socket } from "../../api/socket";
+import { socket } from "../../api/socket";
 import type { IChat } from "../../types/chat/chat.types";
 import ChatUsersCard from "./chat-user-card";
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import type { IMessage } from "../../types/chat/message.types";
+import Modal from "../modal";
+import AddNewChat from "./add-new-chat";
+import { getChat } from "@/api/chat";
 
 const ChatList = ({
   setPrivateMessageId,
@@ -26,6 +29,7 @@ const ChatList = ({
 }) => {
   const [chatList, setChatList] = useState<IChat[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [showAddChat, setShowAddChat] = useState<boolean>(false);
   const { user } = useAppContext();
   const hasConnectedRef = useRef(false);
 
@@ -37,8 +41,8 @@ const ChatList = ({
   }, [user]);
 
   useEffect(() => {
-    socket.on("chats", (data) => {
-      const sortedChats = data.sort((listUser1: IChat, listUser2: IChat) => {
+    socket.on("chats", (chat) => {
+      const sortedChats = chat.sort((listUser1: IChat, listUser2: IChat) => {
         if (listUser1?.userId === user?.id) {
           return -1;
         }
@@ -51,25 +55,30 @@ const ChatList = ({
       setChatList(sortedChats);
     });
 
-    socket.on("receive_private_notification", (data: IMessage) => {
-      setChatList((prev) =>
-        prev.map((chat) =>
-          chat.id === data.chatId
-            ? {
-                ...chat,
-                lastMessage: {
-                  chatId: data.chatId,
-                  from: data.from,
-                  id: data.id,
-                  message: data.message,
-                  status: data.status,
-                  createdAt: data.createdAt,
-                  readBy: data.readBy,
-                },
-              }
-            : chat
-        )
-      );
+    socket.on("receive_private_notification", (message: IMessage) => {
+      setChatList((prev) => {
+        if (prev.some((chat) => chat.id === message.chatId)) {
+          return prev.map((chat) =>
+            chat.id === message.chatId
+              ? {
+                  ...chat,
+                  lastMessage: {
+                    chatId: message.chatId,
+                    from: message.from,
+                    id: message.id,
+                    message: message.message,
+                    status: message.status,
+                    createdAt: message.createdAt,
+                    readBy: message.readBy,
+                  },
+                }
+              : chat
+          );
+        } else {
+          addNewChat(message);
+          return prev;
+        }
+      });
     });
 
     socket.on("online_users", (users: string[]) => {
@@ -84,23 +93,34 @@ const ChatList = ({
     });
 
     socket.on("receive_private_message", (message: IMessage) => {
+      setChatList((prev) => {
+        if (prev.some((chat) => chat.id === message.chatId)) {
+          return prev.map((chat) =>
+            chat.id === message.chatId
+              ? {
+                  ...chat,
+                  lastMessage: {
+                    chatId: message.chatId,
+                    from: message.from,
+                    id: message.id,
+                    message: message.message,
+                    status: message.status,
+                    createdAt: message.createdAt,
+                    readBy: message.readBy,
+                  },
+                }
+              : chat
+          );
+        } else {
+          addNewChat(message);
+          return prev;
+        }
+      });
+    });
+
+    socket.on("chat_created", (chat: IChat) => {
       setChatList((prev) =>
-        prev.map((chat) =>
-          chat.id === message.chatId
-            ? {
-                ...chat,
-                lastMessage: {
-                  chatId: message.chatId,
-                  from: message.from,
-                  id: message.id,
-                  message: message.message,
-                  status: message.status,
-                  createdAt: message.createdAt,
-                  readBy: message.readBy,
-                },
-              }
-            : chat
-        )
+        prev.some((oldChat) => oldChat.id === chat.id) ? prev : [...prev, chat]
       );
     });
 
@@ -109,7 +129,7 @@ const ChatList = ({
 
       setChatList((prev) =>
         prev.map((chat) =>
-          chat.id === lastMessage?.chatId
+          lastMessage && chat.id === lastMessage.chatId
             ? {
                 ...chat,
                 lastMessage: {
@@ -158,12 +178,25 @@ const ChatList = ({
     };
   }, [user]);
 
+  const addNewChat = (message: IMessage) => {
+    getChat(message.chatId).then(async (response) => {
+      if (response.ok) {
+        const newChat: IChat = await response.json();
+
+        setChatList((prev) =>
+          prev.some((chat) => chat.id === newChat.id)
+            ? prev
+            : [...prev, newChat]
+        );
+      }
+    });
+  };
+
   const openChat = (chat: IChat) => {
-    if (!user || !user.id) return;
-    const roomId = getRoomId(user.id, chat.userId);
-    setPrivateMessageId(roomId);
+    if (!chat.roomId) return;
+    setPrivateMessageId(chat.roomId);
     setCurrentChat(chat);
-    socket.emit("join_private_room", roomId);
+    socket.emit("join_private_room", chat.roomId);
   };
 
   return (
@@ -174,7 +207,11 @@ const ChatList = ({
       >
         <div className="chat-list-header">
           <Typography variant="h5">LetsChat</Typography>
-          <IconButton aria-label="add-friend" color="primary">
+          <IconButton
+            aria-label="add-friend"
+            color="primary"
+            onClick={() => setShowAddChat(true)}
+          >
             {" "}
             <AddCircleIcon />
           </IconButton>
@@ -223,13 +260,27 @@ const ChatList = ({
                   key={index}
                   chat={chat}
                   onClick={() => openChat(chat)}
-                  self={index === 0}
+                  self={chat.userId === user?.id}
                   currentChat={chat.userId === currentChat.userId}
                   user={user}
                 />
               ))}
         </Stack>
       </Card>
+
+      <Modal
+        open={showAddChat}
+        onClose={() => setShowAddChat(false)}
+        title="Add new chat"
+        maxWidth="sm"
+        fullWidth
+        modalContent={
+          <AddNewChat
+            openChat={openChat}
+            closeModal={() => setShowAddChat(false)}
+          />
+        }
+      />
     </>
   );
 };

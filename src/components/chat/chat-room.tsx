@@ -117,7 +117,7 @@ const ChatRoom = ({
   const sendPrivateMessage = () => {
     socket.emit("private_message", {
       toPrivateRoom: currentRoomId,
-      message: message,
+      message: message.trim(),
     });
     setMessage("");
   };
@@ -140,6 +140,24 @@ const ChatRoom = ({
         username: user?.displayName,
       });
     }, 1500);
+  };
+
+  const handleMessageSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (message.length < 1) return;
+
+    sendPrivateMessage();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
+      e.preventDefault();
+      if (message.trim()) {
+        sendPrivateMessage();
+      }
+    }
   };
 
   return (
@@ -178,7 +196,7 @@ const ChatRoom = ({
             {typing.join(" ")} typing...
           </Typography>
         ) : null}
-        <div className="chat-room-action">
+        <form className="chat-room-action" onSubmit={handleMessageSubmit}>
           <TextField
             name="messageInput"
             placeholder="Type your message..."
@@ -186,16 +204,17 @@ const ChatRoom = ({
             onChange={(e) => messageChangeHandle(e)}
             className="chat-input"
             multiline
+            onKeyDown={handleKeyDown}
             slotProps={{
               input: {
                 endAdornment: (
                   <InputAdornment position="end">
                     <Button
                       onClick={sendPrivateMessage}
-                      variant="contained"
+                      variant="text"
                       sx={{ borderRadius: "2rem" }}
                       disableElevation
-                      disabled={!message}
+                      disabled={!message.trim()}
                       className="message-sent"
                     >
                       <SendIcon />
@@ -214,7 +233,7 @@ const ChatRoom = ({
               },
             }}
           />
-        </div>
+        </form>
       </div>
     </Card>
   );
