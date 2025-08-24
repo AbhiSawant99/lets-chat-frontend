@@ -1,6 +1,7 @@
 import { Box, Typography, TextField, Button, Card } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import "@/pages/login/style.css";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const SignUp = () => {
     });
 
     if (SignupResponse.ok) {
-      navigate("/");
+      navigate("/username-form");
     } else {
       const errorData = await SignupResponse.json();
       setError(`${errorData.message || "Unknown error"}`);

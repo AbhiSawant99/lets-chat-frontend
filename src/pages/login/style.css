@@ -15,8 +15,8 @@
 }
 
 .login-title {
+  margin-top: 1.5rem !important;
   margin-bottom: 1.5rem;
-  font-weight: 600;
 }
 
 .login-input {

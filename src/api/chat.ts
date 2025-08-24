@@ -1,8 +1,4 @@
-export const searchChats = async (
-  search: string,
-  page?: string,
-  size?: string
-) => {
+export const searchChats = async (search: string) => {
   return await fetch(
     `http://localhost:3000/chat/search-users?search=${search}`,
     {
