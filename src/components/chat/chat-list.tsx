@@ -175,6 +175,7 @@ const ChatList = ({
       socket.off("online_users");
       socket.off("history_message_seen");
       socket.off("message_seen");
+      socket.off("chat_created");
     };
   }, [user]);
 

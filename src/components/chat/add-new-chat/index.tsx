@@ -17,7 +17,7 @@ const AddNewChat = ({
   const [searchResult, setSearchResult] = useState<IChat[]>([]);
 
   useEffect(() => {
-    if (search.length > 3) {
+    if (search.length > 2) {
       searchChats(search).then(async (response) => {
         if (response.ok) {
           const chatList = await response.json();
@@ -34,7 +34,7 @@ const AddNewChat = ({
       <TextField
         type="text"
         className="chat-list-search"
-        placeholder="Search a chat"
+        placeholder="Search by name, username"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         slotProps={{

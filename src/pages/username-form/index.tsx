@@ -2,6 +2,8 @@ import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@/pages/login/style.css";
+import ProfileImageUploader from "@/components/image-uploader";
+import { useAppContext } from "@/components/app-provider/app-context";
 
 const UsernameForm = () => {
   const navigate = useNavigate();
@@ -9,6 +11,8 @@ const UsernameForm = () => {
   const [username, setUsername] = useState("");
   const [availability, setAvailability] = useState<null | boolean>(null);
   const [loading, setLoading] = useState(false);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const { setUser } = useAppContext();
 
   useEffect(() => {
     if (!username) {
@@ -47,21 +51,23 @@ const UsernameForm = () => {
 
     setError(null);
     const formData = new FormData(event.target as HTMLFormElement);
-    const username = formData.get("username") as string;
-
+    // formData.append("username", username);
+    if (photo) {
+      formData.append("photo", photo); // photo should be a File (from <input type="file" /> or drag-drop)
+    }
     const signupResponse = await fetch(
       "http://localhost:3000/auth/sign-final-step",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: username }),
+        body: formData, // no need to set Content-Type manually
         credentials: "include",
       }
     );
 
     if (signupResponse.ok) {
+      const userData = await signupResponse.json();
+      setUser(userData.user);
+      localStorage.setItem("user", JSON.stringify(userData.user));
       navigate("/chat");
     } else {
       const errorData = await signupResponse.json();
@@ -99,6 +105,7 @@ const UsernameForm = () => {
             onSubmit={handleSubmit}
             className="form-container"
           >
+            <ProfileImageUploader savePhoto={setPhoto} />
             <div>
               <TextField
                 label="Username"

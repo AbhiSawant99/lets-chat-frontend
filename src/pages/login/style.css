@@ -65,10 +65,10 @@
 }
 
 .form-container {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .login-wrapper {

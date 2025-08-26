@@ -11,7 +11,7 @@ export interface AuthUser {
   id: string;
   displayName: string;
   emails?: { value: string }[];
-  photos?: { value: string }[];
+  photo?: string;
 }
 
 export interface AuthRequestUser {
