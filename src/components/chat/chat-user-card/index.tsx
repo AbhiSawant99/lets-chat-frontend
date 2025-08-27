@@ -1,8 +1,8 @@
 import { Avatar, Badge, Typography } from "@mui/material";
 import "./styles.css";
 import type { IChat } from "@/types/chat/chat.types";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import type { AuthUser } from "@/types/app-provider/app-context";
+import getImageUrl from "@/api/image-url.api";
 
 const ChatUsersCard = ({
   chat,
@@ -31,11 +31,14 @@ const ChatUsersCard = ({
         >
           <Avatar
             alt={chat.username}
-            src="/broken-image.jpg"
+            src={`${getImageUrl(chat.photo)}`}
             sx={{ width: "3.125rem", height: "3.125rem" }}
-          >
-            <PersonRoundedIcon sx={{ fontSize: "1.75rem" }} />
-          </Avatar>
+            slotProps={{
+              img: {
+                loading: "lazy",
+              },
+            }}
+          />
         </Badge>
       </div>
       <div>

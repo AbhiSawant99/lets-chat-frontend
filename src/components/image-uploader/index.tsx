@@ -8,6 +8,7 @@ import { Avatar, Badge, IconButton } from "@mui/material";
 import { useAppContext } from "@/components/app-provider/app-context";
 import CreateIcon from "@mui/icons-material/Create";
 import "./styles.css";
+import getImageUrl from "@/api/image-url.api";
 
 export default function ProfileImageUploader({
   savePhoto,
@@ -19,7 +20,7 @@ export default function ProfileImageUploader({
 
   useEffect(() => {
     if (user && user.photo) {
-      setImage(`http://localhost:3000${user.photo}`);
+      setImage(getImageUrl(user.photo));
     }
   }, [user]);
 
@@ -48,9 +49,14 @@ export default function ProfileImageUploader({
       }
     >
       <Avatar
+        alt={user?.displayName}
         src={image}
-        alt={user?.displayName || "Profile"}
         className="image-avatar"
+        slotProps={{
+          img: {
+            loading: "lazy",
+          },
+        }}
       />
     </Badge>
   );

@@ -6,6 +6,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { logout } from "@/api/auth.api";
 import { LightTooltip } from "@/components/tool-tip";
 import { useAppContext } from "@/components/app-provider/app-context";
+import getImageUrl from "@/api/image-url.api";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { user } = useAppContext();
@@ -47,11 +48,15 @@ const Layout = ({ children }: { children: ReactNode }) => {
       >
         <Box className="layout-navigation-parent">
           <div className="layout-navigation">
-            {/* <img src="/logo.png" className="layout-logo" /> */}
             <Avatar
-              src={user?.photo && `http://localhost:3000${user.photo}`}
-              alt={user?.displayName || "Profile"}
+              alt={user?.displayName}
+              src={`${getImageUrl(user?.photo)}`}
               className="layout-logo"
+              slotProps={{
+                img: {
+                  loading: "lazy",
+                },
+              }}
             />
           </div>
           <div className="layout-navigation">

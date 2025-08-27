@@ -6,5 +6,6 @@ export interface IChat {
   username: string;
   userId: string;
   online: boolean;
+  photo?: string;
   lastMessage?: IMessage;
 }

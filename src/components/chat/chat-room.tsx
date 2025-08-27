@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Avatar,
+  Badge,
   Box,
   Button,
   Card,
@@ -11,11 +12,11 @@ import {
 import "./styles.css";
 import SendIcon from "@mui/icons-material/Send";
 import ChatMessage from "./chat-message";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import type { IChat } from "@/types/chat/chat.types";
 import type { IMessage } from "@/types/chat/message.types";
 import { useAppContext } from "@/components/app-provider/app-context";
 import { socket } from "@/api/socket.api";
+import getImageUrl from "@/api/image-url.api";
 
 const ChatRoom = ({
   currentRoomId,
@@ -167,13 +168,23 @@ const ChatRoom = ({
     >
       <Box className="chat-room-header">
         {currentChat.username ? (
-          <Avatar
-            alt={currentChat.username}
-            src="/broken-image.jpg"
-            sx={{ width: "3.125rem", height: "3.125rem" }}
+          <Badge
+            overlap="circular"
+            variant="dot"
+            color="success"
+            invisible={!currentChat.online}
           >
-            <PersonRoundedIcon sx={{ fontSize: "1.75rem" }} />
-          </Avatar>
+            <Avatar
+              alt={currentChat.username}
+              src={`${getImageUrl(currentChat.photo)}`}
+              sx={{ width: "3.125rem", height: "3.125rem" }}
+              slotProps={{
+                img: {
+                  loading: "lazy",
+                },
+              }}
+            />
+          </Badge>
         ) : null}
         <Typography variant="h6">
           {currentChat.username
