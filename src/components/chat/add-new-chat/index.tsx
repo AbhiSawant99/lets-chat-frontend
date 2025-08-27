@@ -2,7 +2,7 @@ import { InputAdornment, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import type { IChat } from "@/types/chat/chat.types";
-import { searchChats } from "@/api/chat";
+import { searchChats } from "@/api/chat.api";
 import ChatUsersCard from "@/components/chat/chat-user-card";
 import "./styles.css";
 
@@ -18,19 +18,14 @@ const AddNewChat = ({
 
   useEffect(() => {
     if (search.length > 2) {
-      searchChats(search).then(async (response) => {
-        if (response.ok) {
-          const chatList = await response.json();
-          setSearchResult(chatList);
-        } else {
-          console.log("error : ");
-        }
+      searchChats(search).then((response) => {
+        setSearchResult(response);
       });
     }
   }, [search]);
 
   return (
-    <>
+    <div className="add-new-chat-container">
       <TextField
         type="text"
         className="chat-list-search"
@@ -85,7 +80,7 @@ const AddNewChat = ({
           <p>Search a username to get results</p>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

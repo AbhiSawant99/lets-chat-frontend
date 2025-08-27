@@ -11,6 +11,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 import "./style.css";
 import { useState } from "react";
+import { requestLogin } from "@/api/auth.api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -24,22 +25,16 @@ const LoginPage = () => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    const loginResponse = await fetch("http://localhost:3000/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    });
-
-    if (loginResponse.ok) {
-      const userData = await loginResponse.json();
+    try {
+      const userData = await requestLogin(email, password);
       localStorage.setItem("user", JSON.stringify(userData.user));
       navigate("/chat");
-    } else {
-      const errorData = await loginResponse.json();
-      setError(`${errorData.message || "Unknown error"}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 

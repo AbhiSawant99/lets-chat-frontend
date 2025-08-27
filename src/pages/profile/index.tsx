@@ -1,3 +1,4 @@
+import { getUserProfile } from "@/api/user.api";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,18 +9,8 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const res = await fetch("http://localhost:3000/profile", {
-          method: "GET",
-          credentials: "include",
-        });
+        const data = await getUserProfile();
 
-        if (!res.ok) {
-          setUserDetails(null);
-          navigate("/", { replace: true }); // replace history
-          return;
-        }
-
-        const data = await res.json();
         setUserDetails(data);
       } catch (error) {
         console.error("Error fetching user details:", error);

@@ -5,6 +5,8 @@ import "@/pages/login/style.css";
 import ProfileImageUploader from "@/components/image-uploader";
 import { useAppContext } from "@/components/app-provider/app-context";
 import { TaskAlt, HighlightOff } from "@mui/icons-material";
+import { requestSaveDetails } from "@/api/auth.api";
+import { checkUsernameAvailability } from "@/api/user.api";
 
 const UsernameForm = () => {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ const UsernameForm = () => {
   const [touched, setTouched] = useState(false);
 
   const validateUsername = () => {
-    const usernameRegex = /^[A-Za-z0-9_]{4,}$/;
+    const usernameRegex = /^[a-z0-9_]{4,}$/;
     return usernameRegex.test(username);
   };
 
@@ -30,17 +32,7 @@ const UsernameForm = () => {
     const delayDebounce = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(
-          `http://localhost:3000/auth/check-username?username=${username}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
-        const data = await res.json();
+        const data = await checkUsernameAvailability(username);
         setAvailability(data.available);
       } catch (err) {
         console.error(err);
@@ -58,27 +50,24 @@ const UsernameForm = () => {
 
     setError(null);
     const formData = new FormData(event.target as HTMLFormElement);
-    // formData.append("username", username);
     if (photo) {
-      formData.append("photo", photo); // photo should be a File (from <input type="file" /> or drag-drop)
+      formData.append("photo", photo);
     }
-    const signupResponse = await fetch(
-      "http://localhost:3000/auth/sign-final-step",
-      {
-        method: "POST",
-        body: formData, // no need to set Content-Type manually
-        credentials: "include",
-      }
-    );
 
-    if (signupResponse.ok) {
-      const userData = await signupResponse.json();
-      setUser(userData.user);
-      localStorage.setItem("user", JSON.stringify(userData.user));
+    try {
+      const saveUserDetailsResponse = await requestSaveDetails(formData);
+      setUser(saveUserDetailsResponse.user);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(saveUserDetailsResponse.user)
+      );
       navigate("/chat");
-    } else {
-      const errorData = await signupResponse.json();
-      setError(`${errorData.message || "Unknown error"}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 
@@ -129,7 +118,7 @@ const UsernameForm = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onBlur={() => setTouched(true)}
-                helperText="Should be more than 4 letters and contain only letters, numbers, underscores"
+                helperText="Use 4+ lowercase letters, numbers, or underscores"
                 error={touched && !validateUsername()}
                 fullWidth
               />
@@ -186,7 +175,7 @@ const UsernameForm = () => {
                 fullWidth
                 disabled={!(availability && validateUsername())}
               >
-                Submit
+                Save
               </Button>
             </Box>
           </Box>

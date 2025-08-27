@@ -11,10 +11,10 @@ import ChatUsersCard from "./chat-user-card";
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddNewChat from "./add-new-chat";
-import { getChat } from "@/api/chat";
+import { getChat } from "@/api/chat.api";
 import type { IChat } from "@/types/chat/chat.types";
 import { useAppContext } from "@/components/app-provider/app-context";
-import { socket } from "@/api/socket";
+import { socket } from "@/api/socket.api";
 import type { IMessage } from "@/types/chat/message.types";
 import Modal from "@/components/modal";
 
@@ -180,16 +180,12 @@ const ChatList = ({
   }, [user]);
 
   const addNewChat = (message: IMessage) => {
-    getChat(message.chatId).then(async (response) => {
-      if (response.ok) {
-        const newChat: IChat = await response.json();
+    getChat(message.chatId).then((response) => {
+      const newChat: IChat = response;
 
-        setChatList((prev) =>
-          prev.some((chat) => chat.id === newChat.id)
-            ? prev
-            : [...prev, newChat]
-        );
-      }
+      setChatList((prev) =>
+        prev.some((chat) => chat.id === newChat.id) ? prev : [...prev, newChat]
+      );
     });
   };
 

@@ -3,6 +3,8 @@ import Dialog, { type DialogProps } from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import { IconButton, Typography } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 interface ModalProps extends DialogProps {
   open: boolean;
@@ -30,7 +32,22 @@ export default function Modal({
       aria-describedby="alert-dialog-description"
       {...props}
     >
-      {!headless && <DialogTitle id="alert-dialog-title">{title}</DialogTitle>}
+      {!headless && (
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingBottom: "0.5rem",
+          }}
+        >
+          <Typography variant="h6">{title}</Typography>
+          <IconButton onClick={onClose}>
+            <CancelIcon />
+          </IconButton>
+        </DialogTitle>
+      )}
       <DialogContent>{modalContent}</DialogContent>
       {action && <DialogActions>{action}</DialogActions>}
     </Dialog>

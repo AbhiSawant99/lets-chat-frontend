@@ -1,6 +1,7 @@
 import React, { useEffect, useState, type ReactNode } from "react";
 import { AppContext, type AuthUser } from "@/types/app-provider/app-context";
 import { useNavigate } from "react-router-dom";
+import { getAuthUser } from "@/api/auth.api";
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -10,33 +11,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/auth/user", {
-          credentials: "include",
-        });
-        if (response.ok) {
-          const userData = await response.json();
+    const localUser = localStorage.getItem("user");
+    if (!localUser) {
+      getAuthUser().then((response) => {
+        if (response) {
+          const userData = response;
           setUser(userData.user);
           localStorage.setItem("user", JSON.stringify(userData.user));
         } else {
+          setUser(undefined);
+          localStorage.removeItem("user");
+          navigate("/");
           throw new Error("Failed to fetch user");
         }
-      } catch (err) {
-        console.error(err);
-        setUser(undefined);
-        localStorage.removeItem("user");
-        navigate("/");
-      }
-    };
-
-    const localUser = localStorage.getItem("user");
-    if (!localUser) {
-      fetchUser();
+      });
     } else {
       setUser(JSON.parse(localUser));
     }
-  }, []);
+  }, [navigate]);
 
   const toggleTheme = () =>
     setTheme((prev) => (prev === "light" ? "dark" : "light"));

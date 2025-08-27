@@ -2,6 +2,7 @@ import { Box, Typography, TextField, Button, Card } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "@/pages/login/style.css";
+import { requestSignup } from "@/api/auth.api";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -16,20 +17,15 @@ const SignUp = () => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    const SignupResponse = await fetch("http://localhost:3000/auth/sign-up", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
-      credentials: "include",
-    });
-
-    if (SignupResponse.ok) {
+    try {
+      await requestSignup({ name, email, password });
       navigate("/username-form");
-    } else {
-      const errorData = await SignupResponse.json();
-      setError(`${errorData.message || "Unknown error"}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 

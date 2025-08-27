@@ -5,3 +5,7 @@
   height: calc(100vh - 13.5rem);
   overflow: auto;
 }
+
+.add-new-chat-container {
+  margin: 0.25rem 0rem;
+}

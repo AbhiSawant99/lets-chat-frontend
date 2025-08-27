@@ -9,7 +9,7 @@ import {
 import "./styles.css";
 import SunnyIcon from "@mui/icons-material/Sunny";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import { logout } from "../../api/auth";
+import { logout } from "../../api/auth.api";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const NavBar = () => {

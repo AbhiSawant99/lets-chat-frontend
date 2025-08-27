@@ -3,7 +3,7 @@ import { type ReactNode } from "react";
 import SunnyIcon from "@mui/icons-material/Sunny";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { logout } from "@/api/auth";
+import { logout } from "@/api/auth.api";
 import { LightTooltip } from "@/components/tool-tip";
 import { useAppContext } from "@/components/app-provider/app-context";
 

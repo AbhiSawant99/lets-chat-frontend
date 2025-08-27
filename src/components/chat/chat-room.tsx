@@ -15,7 +15,7 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import type { IChat } from "@/types/chat/chat.types";
 import type { IMessage } from "@/types/chat/message.types";
 import { useAppContext } from "@/components/app-provider/app-context";
-import { socket } from "@/api/socket";
+import { socket } from "@/api/socket.api";
 
 const ChatRoom = ({
   currentRoomId,
