@@ -1,8 +1,5 @@
 import React, { useEffect, useState, type ReactNode } from "react";
-import {
-  AppContext,
-  type AuthUser,
-} from "../../types/app-provider/app-context";
+import { AppContext, type AuthUser } from "@/types/app-provider/app-context";
 import { useNavigate } from "react-router-dom";
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({

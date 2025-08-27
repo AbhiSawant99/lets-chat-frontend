@@ -7,16 +7,16 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { useAppContext } from "../app-provider/app-context";
-import { socket } from "../../api/socket";
-import type { IChat } from "../../types/chat/chat.types";
 import ChatUsersCard from "./chat-user-card";
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import type { IMessage } from "../../types/chat/message.types";
-import Modal from "../modal";
 import AddNewChat from "./add-new-chat";
 import { getChat } from "@/api/chat";
+import type { IChat } from "@/types/chat/chat.types";
+import { useAppContext } from "@/components/app-provider/app-context";
+import { socket } from "@/api/socket";
+import type { IMessage } from "@/types/chat/message.types";
+import Modal from "@/components/modal";
 
 const ChatList = ({
   setPrivateMessageId,

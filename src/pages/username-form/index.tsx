@@ -132,7 +132,6 @@ const UsernameForm = () => {
                 helperText="Should be more than 4 letters and contain only letters, numbers, underscores"
                 error={touched && !validateUsername()}
                 fullWidth
-                required
               />
               {username && (
                 <Typography
@@ -169,15 +168,27 @@ const UsernameForm = () => {
                 </Typography>
               )}
             </div>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              fullWidth
-              disabled={!(availability && validateUsername())}
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
             >
-              Submit
-            </Button>
+              <Button variant="text" color="info" type="button" fullWidth>
+                Skip
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                fullWidth
+                disabled={!(availability && validateUsername())}
+              >
+                Submit
+              </Button>
+            </Box>
           </Box>
         </Card>
       </Box>

@@ -1,9 +1,9 @@
 import { InputAdornment, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import type { IChat } from "../../../types/chat/chat.types";
-import { searchChats } from "../../../api/chat";
-import ChatUsersCard from "../chat-user-card";
+import type { IChat } from "@/types/chat/chat.types";
+import { searchChats } from "@/api/chat";
+import ChatUsersCard from "@/components/chat/chat-user-card";
 import "./styles.css";
 
 const AddNewChat = ({

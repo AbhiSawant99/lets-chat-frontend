@@ -1,8 +1,8 @@
 import { Card, CardContent, Typography } from "@mui/material";
-import type { IMessage } from "../../../types/chat/message.types";
+import type { IMessage } from "@/types/chat/message.types";
 import { DateTime } from "luxon";
 import "./styles.css";
-import { useAppContext } from "../../app-provider/app-context";
+import { useAppContext } from "@/components/app-provider/app-context";
 import React from "react";
 
 const ChatMessage = React.memo(({ message }: { message: IMessage }) => {

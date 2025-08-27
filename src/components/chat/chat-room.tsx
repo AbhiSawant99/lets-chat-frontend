@@ -1,6 +1,4 @@
-import { socket } from "../../api/socket";
 import { useEffect, useRef, useState } from "react";
-import type { IMessage } from "../../types/chat/message.types";
 import {
   Avatar,
   Box,
@@ -11,11 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 import "./styles.css";
-import type { IChat } from "../../types/chat/chat.types";
 import SendIcon from "@mui/icons-material/Send";
 import ChatMessage from "./chat-message";
-import { useAppContext } from "../app-provider/app-context";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import type { IChat } from "@/types/chat/chat.types";
+import type { IMessage } from "@/types/chat/message.types";
+import { useAppContext } from "@/components/app-provider/app-context";
+import { socket } from "@/api/socket";
 
 const ChatRoom = ({
   currentRoomId,

@@ -1,8 +1,8 @@
 import { Avatar, Badge, Typography } from "@mui/material";
 import "./styles.css";
-import type { IChat } from "../../../types/chat/chat.types";
+import type { IChat } from "@/types/chat/chat.types";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import type { AuthUser } from "../../../types/app-provider/app-context";
+import type { AuthUser } from "@/types/app-provider/app-context";
 
 const ChatUsersCard = ({
   chat,

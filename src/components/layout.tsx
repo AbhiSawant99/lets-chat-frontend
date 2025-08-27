@@ -1,12 +1,14 @@
-import { Box, Drawer, IconButton, useColorScheme } from "@mui/material";
+import { Avatar, Box, Drawer, IconButton, useColorScheme } from "@mui/material";
 import { type ReactNode } from "react";
 import SunnyIcon from "@mui/icons-material/Sunny";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import { logout } from "../api/auth";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { LightTooltip } from "./tool-tip";
+import { logout } from "@/api/auth";
+import { LightTooltip } from "@/components/tool-tip";
+import { useAppContext } from "@/components/app-provider/app-context";
 
 const Layout = ({ children }: { children: ReactNode }) => {
+  const { user } = useAppContext();
   const { mode, setMode } = useColorScheme();
 
   const handleLogout = () => {
@@ -45,7 +47,12 @@ const Layout = ({ children }: { children: ReactNode }) => {
       >
         <Box className="layout-navigation-parent">
           <div className="layout-navigation">
-            <img src="/logo.png" className="layout-logo" />
+            {/* <img src="/logo.png" className="layout-logo" /> */}
+            <Avatar
+              src={user?.photo && `http://localhost:3000${user.photo}`}
+              alt={user?.displayName || "Profile"}
+              className="layout-logo"
+            />
           </div>
           <div className="layout-navigation">
             {mode === "light" ? (

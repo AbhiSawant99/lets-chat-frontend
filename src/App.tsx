@@ -1,10 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-import LoginPage from "./pages/login";
-import ProfilePage from "./pages/profile";
+import "@/App.css";
+import LoginPage from "@/pages/login";
+import ProfilePage from "@/pages/profile";
 import { lazy } from "react";
-import SignUp from "./pages/sign-up";
-import { AppProvider } from "./components/app-provider/app-provider";
+import SignUp from "@/pages/sign-up";
+import { AppProvider } from "@/components/app-provider/app-provider";
 
 const ChatPage = lazy(() => import("@/pages/chat"));
 const UsernameForm = lazy(() => import("@/pages/username-form"));

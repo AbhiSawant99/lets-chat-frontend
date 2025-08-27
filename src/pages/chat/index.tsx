@@ -1,12 +1,12 @@
 import { useState } from "react";
-import ChatList from "../../components/chat/chat-list";
-import ChatRoom from "../../components/chat/chat-room";
-import Layout from "../../components/layout";
+import ChatList from "@/components/chat/chat-list";
+import ChatRoom from "@/components/chat/chat-room";
+import Layout from "@/components/layout";
 import "./style.css";
-import type { IChat } from "../../types/chat/chat.types";
-import StickyChatDrawer from "../../components/swipable-drawer";
+import type { IChat } from "@/types/chat/chat.types";
+import StickyChatDrawer from "@/components/swipable-drawer";
 import { useMediaQuery, useTheme } from "@mui/material";
-import SelectChat from "../../components/chat/select-chat";
+import SelectChat from "@/components/chat/select-chat";
 
 const ChatPage = () => {
   const [currentRoomId, setCurrentRoomId] = useState<string>("");
