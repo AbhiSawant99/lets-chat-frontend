@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "@/pages/login/style.css";
 import ProfileImageUploader from "@/components/image-uploader";
 import { useAppContext } from "@/components/app-provider/app-context";
+import { TaskAlt, HighlightOff } from "@mui/icons-material";
 
 const UsernameForm = () => {
   const navigate = useNavigate();
@@ -13,9 +14,15 @@ const UsernameForm = () => {
   const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const { setUser } = useAppContext();
+  const [touched, setTouched] = useState(false);
+
+  const validateUsername = () => {
+    const usernameRegex = /^[A-Za-z0-9_]{4,}$/;
+    return usernameRegex.test(username);
+  };
 
   useEffect(() => {
-    if (!username) {
+    if (!username || !validateUsername()) {
       setAvailability(null);
       return;
     }
@@ -105,19 +112,31 @@ const UsernameForm = () => {
             onSubmit={handleSubmit}
             className="form-container"
           >
-            <ProfileImageUploader savePhoto={setPhoto} />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "1rem",
+              }}
+            >
+              <ProfileImageUploader savePhoto={setPhoto} />
+            </div>
             <div>
               <TextField
                 label="Username"
                 name="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onBlur={() => setTouched(true)}
+                helperText="Should be more than 4 letters and contain only letters, numbers, underscores"
+                error={touched && !validateUsername()}
                 fullWidth
                 required
               />
               {username && (
                 <Typography
-                  variant="body2"
+                  variant="caption"
                   color={
                     availability === null
                       ? "textSecondary"
@@ -125,18 +144,38 @@ const UsernameForm = () => {
                         ? "green"
                         : "red"
                   }
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.25rem",
+                    marginTop: "0.5rem",
+                  }}
                 >
-                  {loading
-                    ? "Checking..."
-                    : availability === null
-                      ? ""
-                      : availability
-                        ? "✅ Username is available"
-                        : "❌ Username already taken"}
+                  {loading ? (
+                    "Checking..."
+                  ) : availability === null ? (
+                    ""
+                  ) : availability ? (
+                    <>
+                      <TaskAlt sx={{ fontSize: "1.25rem" }} />
+                      Username is Available
+                    </>
+                  ) : (
+                    <>
+                      <HighlightOff sx={{ fontSize: "1.25rem" }} />
+                      Username is Taken
+                    </>
+                  )}
                 </Typography>
               )}
             </div>
-            <Button variant="contained" color="primary" type="submit" fullWidth>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              fullWidth
+              disabled={!(availability && validateUsername())}
+            >
               Submit
             </Button>
           </Box>

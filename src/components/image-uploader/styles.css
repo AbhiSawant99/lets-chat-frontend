@@ -1,0 +1,13 @@
+.edit-picture-button {
+  border: 1px solid var(--mui-palette-back-dark) !important;
+  padding: 0.9375rem !important;
+  border-radius: 7.4375rem !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  background-color: var(--mui-palette-back-dark) !important;
+}
+
+.image-avatar {
+  width: 9.375rem !important;
+  height: 9.375rem !important;
+}

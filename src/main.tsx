@@ -37,6 +37,17 @@ declare module "@mui/material/styles" {
 }
 
 const theme = createTheme({
+  components: {
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          fontSize: "0.6rem",
+          marginLeft: "0.25rem",
+          mariginRight: "0.25rem",
+        },
+      },
+    },
+  },
   typography: {
     fontFamily: `'Quicksand', sans-serif`,
   },

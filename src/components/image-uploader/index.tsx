@@ -4,8 +4,10 @@ import React, {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Badge, IconButton } from "@mui/material";
 import { useAppContext } from "@/components/app-provider/app-context";
+import CreateIcon from "@mui/icons-material/Create";
+import "./styles.css";
 
 export default function ProfileImageUploader({
   savePhoto,
@@ -13,9 +15,7 @@ export default function ProfileImageUploader({
   savePhoto: Dispatch<SetStateAction<File | null>>;
 }) {
   const { user } = useAppContext();
-  const [image, setImage] = useState<string>(
-    "" // existing image fallback
-  );
+  const [image, setImage] = useState<string>("");
 
   useEffect(() => {
     if (user && user.photo) {
@@ -32,24 +32,26 @@ export default function ProfileImageUploader({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      {/* Show existing or uploaded image */}
+    <Badge
+      overlap="circular"
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      badgeContent={
+        <IconButton component="label" className="edit-picture-button">
+          <CreateIcon />
+          <input
+            hidden
+            accept="image/*"
+            type="file"
+            onChange={handleImageUpload}
+          />
+        </IconButton>
+      }
+    >
       <Avatar
         src={image}
         alt={user?.displayName || "Profile"}
-        sx={{ width: 100, height: 100, borderRadius: "50%" }}
+        className="image-avatar"
       />
-
-      {/* Upload button */}
-      <Button variant="contained" component="label">
-        Upload Image
-        <input
-          hidden
-          accept="image/*"
-          type="file"
-          onChange={handleImageUpload}
-        />
-      </Button>
-    </div>
+    </Badge>
   );
 }
