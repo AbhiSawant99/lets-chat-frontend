@@ -1,6 +1,5 @@
 .chat-page {
   display: flex;
-  padding: 0.75rem;
   background-color: var(--mui-palette-back-main) !important;
   gap: 0.75rem;
 }

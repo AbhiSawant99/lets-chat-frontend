@@ -61,10 +61,11 @@ body {
   height: 2.75rem;
 }
 
-.layout-logo {
+.layout-user-profile {
   width: 2rem;
   height: 2rem;
   margin: 0 auto;
+  cursor: pointer;
 }
 
 .custom-scroll {

@@ -3,7 +3,7 @@ import Dialog, { type DialogProps } from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { IconButton, Typography } from "@mui/material";
+import { IconButton } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 interface ModalProps extends DialogProps {
@@ -42,7 +42,7 @@ export default function Modal({
             paddingBottom: "0.5rem",
           }}
         >
-          <Typography variant="h6">{title}</Typography>
+          {title}
           <IconButton onClick={onClose}>
             <CancelIcon />
           </IconButton>

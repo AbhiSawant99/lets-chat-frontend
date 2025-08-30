@@ -31,7 +31,8 @@
   padding-top: 1rem;
   padding-bottom: 1rem;
   height: calc(100vh - 10.5rem);
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .chat-list-header {
@@ -42,6 +43,7 @@
 }
 
 .chat-room-action {
+  position: relative;
   display: flex;
   height: 4rem;
   align-items: center;

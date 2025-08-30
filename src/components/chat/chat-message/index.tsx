@@ -6,7 +6,7 @@ import { useAppContext } from "@/components/app-provider/app-context";
 import React from "react";
 
 const ChatMessage = React.memo(({ message }: { message: IMessage }) => {
-  const date = DateTime.fromISO(message.createdAt).toFormat("dd LLLL, HH:mm");
+  const date = DateTime.fromISO(message.createdAt).toFormat("HH:mm");
   const { user } = useAppContext();
 
   return (

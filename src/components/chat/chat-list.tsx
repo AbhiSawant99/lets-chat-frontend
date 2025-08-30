@@ -42,23 +42,14 @@ const ChatList = ({
 
   useEffect(() => {
     socket.on("chats", (chat) => {
-      const sortedChats = chat.sort((listUser1: IChat, listUser2: IChat) => {
-        if (listUser1?.userId === user?.id) {
-          return -1;
-        }
-        if (listUser2?.userId === user?.id) {
-          return 1;
-        }
-
-        return 0;
-      });
-      setChatList(sortedChats);
+      setChatList(chat);
     });
 
     socket.on("receive_private_notification", (message: IMessage) => {
       setChatList((prev) => {
         if (prev.some((chat) => chat.id === message.chatId)) {
-          return prev.map((chat) =>
+          // find the chat and update it
+          const updatedChatList = prev.map((chat) =>
             chat.id === message.chatId
               ? {
                   ...chat,
@@ -74,6 +65,16 @@ const ChatList = ({
                 }
               : chat
           );
+
+          // move the updated chat to the top
+          const updatedChat = updatedChatList.find(
+            (chat) => chat.id === message.chatId
+          )!;
+          const remainingChats = updatedChatList.filter(
+            (chat) => chat.id !== message.chatId
+          );
+
+          return [updatedChat, ...remainingChats];
         } else {
           addNewChat(message);
           return prev;
@@ -95,7 +96,8 @@ const ChatList = ({
     socket.on("receive_private_message", (message: IMessage) => {
       setChatList((prev) => {
         if (prev.some((chat) => chat.id === message.chatId)) {
-          return prev.map((chat) =>
+          // find the chat and update it
+          const updatedChatList = prev.map((chat) =>
             chat.id === message.chatId
               ? {
                   ...chat,
@@ -111,7 +113,18 @@ const ChatList = ({
                 }
               : chat
           );
+
+          // move the updated chat to the top
+          const updatedChat = updatedChatList.find(
+            (chat) => chat.id === message.chatId
+          )!;
+          const remainingChats = updatedChatList.filter(
+            (chat) => chat.id !== message.chatId
+          );
+
+          return [updatedChat, ...remainingChats];
         } else {
+          // new chat → add normally
           addNewChat(message);
           return prev;
         }
@@ -120,7 +133,7 @@ const ChatList = ({
 
     socket.on("chat_created", (chat: IChat) => {
       setChatList((prev) =>
-        prev.some((oldChat) => oldChat.id === chat.id) ? prev : [...prev, chat]
+        prev.some((oldChat) => oldChat.id === chat.id) ? prev : [chat, ...prev]
       );
     });
 
@@ -148,8 +161,8 @@ const ChatList = ({
     });
 
     socket.on("message_seen", (message: IMessage) => {
-      setChatList((prev) =>
-        prev.map((chat) =>
+      setChatList((prev) => {
+        const updatedChatList = prev.map((chat) =>
           chat.id === message.chatId
             ? {
                 ...chat,
@@ -164,8 +177,18 @@ const ChatList = ({
                 },
               }
             : chat
-        )
-      );
+        );
+
+        // move the updated chat to the top
+        const updatedChat = updatedChatList.find(
+          (chat) => chat.id === message.chatId
+        )!;
+        const remainingChats = updatedChatList.filter(
+          (chat) => chat.id !== message.chatId
+        );
+
+        return [updatedChat, ...remainingChats];
+      });
     });
 
     return () => {

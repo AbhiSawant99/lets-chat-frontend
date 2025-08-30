@@ -1,4 +1,4 @@
-import { InputAdornment, Stack, TextField } from "@mui/material";
+import { InputAdornment, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import type { IChat } from "@/types/chat/chat.types";
@@ -23,6 +23,65 @@ const AddNewChat = ({
       });
     }
   }, [search]);
+
+  const showResult = () => {
+    if (!search) {
+      return (
+        <div>
+          <Typography
+            sx={{
+              textAlign: "center",
+              color: "action.active",
+              marginTop: "1rem",
+            }}
+          >
+            Search a username to get results
+          </Typography>
+        </div>
+      );
+    } else if (search && searchResult.length == 0) {
+      return (
+        <div>
+          <Typography
+            sx={{
+              textAlign: "center",
+              color: "action.active",
+              marginTop: "1rem",
+            }}
+          >
+            {`Could not find any result for ${search}`}
+          </Typography>
+        </div>
+      );
+    } else {
+      return (
+        <Stack className="search-chat-list custom-scroll">
+          {searchResult.length > 0 &&
+            searchResult
+              .filter((c) => {
+                if (search && search.length > 0) {
+                  return c.username
+                    .trim()
+                    .toLocaleLowerCase()
+                    .includes(search.trim().toLocaleLowerCase());
+                } else {
+                  return true;
+                }
+              })
+              .map((chat, index) => (
+                <ChatUsersCard
+                  key={index}
+                  chat={chat}
+                  onClick={() => {
+                    openChat(chat);
+                    closeModal();
+                  }}
+                />
+              ))}
+        </Stack>
+      );
+    }
+  };
 
   return (
     <div className="add-new-chat-container">
@@ -50,36 +109,7 @@ const AddNewChat = ({
           },
         }}
       />
-      {searchResult.length > 0 ? (
-        <Stack className="search-chat-list custom-scroll">
-          {searchResult.length > 0 &&
-            searchResult
-              .filter((c) => {
-                if (search && search.length > 0) {
-                  return c.username
-                    .trim()
-                    .toLocaleLowerCase()
-                    .includes(search.trim().toLocaleLowerCase());
-                } else {
-                  return true;
-                }
-              })
-              .map((chat, index) => (
-                <ChatUsersCard
-                  key={index}
-                  chat={chat}
-                  onClick={() => {
-                    openChat(chat);
-                    closeModal();
-                  }}
-                />
-              ))}
-        </Stack>
-      ) : (
-        <div>
-          <p>Search a username to get results</p>
-        </div>
-      )}
+      {showResult()}
     </div>
   );
 };

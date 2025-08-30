@@ -7,17 +7,23 @@ import { logout } from "@/api/auth.api";
 import { LightTooltip } from "@/components/tool-tip";
 import { useAppContext } from "@/components/app-provider/app-context";
 import getImageUrl from "@/api/image-url.api";
+import { useNavigate } from "react-router-dom";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { user } = useAppContext();
   const { mode, setMode } = useColorScheme();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
 
     localStorage.removeItem("user");
 
-    window.location.href = "/";
+    navigate("/");
+  };
+
+  const handleAvatarOnlick = () => {
+    navigate("/profile");
   };
 
   return (
@@ -48,16 +54,19 @@ const Layout = ({ children }: { children: ReactNode }) => {
       >
         <Box className="layout-navigation-parent">
           <div className="layout-navigation">
-            <Avatar
-              alt={user?.displayName}
-              src={`${getImageUrl(user?.photo)}`}
-              className="layout-logo"
-              slotProps={{
-                img: {
-                  loading: "lazy",
-                },
-              }}
-            />
+            <LightTooltip title="Profile" placement="right">
+              <Avatar
+                alt={user?.displayName}
+                src={`${getImageUrl(user?.photo)}`}
+                className="layout-user-profile"
+                slotProps={{
+                  img: {
+                    loading: "lazy",
+                  },
+                }}
+                onClick={handleAvatarOnlick}
+              />
+            </LightTooltip>
           </div>
           <div className="layout-navigation">
             {mode === "light" ? (
@@ -96,7 +105,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           </div>
         </Box>
       </Drawer>
-      <Box sx={{ width: "100%" }}>{children}</Box>
+      <Box sx={{ width: "100%", padding: "0.75rem" }}>{children}</Box>
     </Box>
   );
 };

@@ -10,7 +10,7 @@ export interface IAppContext {
 export interface AuthUser {
   id: string;
   displayName: string;
-  emails?: { value: string }[];
+  email: string;
   photo?: string;
 }
 

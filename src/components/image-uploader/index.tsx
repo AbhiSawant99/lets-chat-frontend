@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Badge, IconButton } from "@mui/material";
 import { useAppContext } from "@/components/app-provider/app-context";
 import CreateIcon from "@mui/icons-material/Create";
@@ -13,7 +8,7 @@ import getImageUrl from "@/api/image-url.api";
 export default function ProfileImageUploader({
   savePhoto,
 }: {
-  savePhoto: Dispatch<SetStateAction<File | null>>;
+  savePhoto: (file: File) => void;
 }) {
   const { user } = useAppContext();
   const [image, setImage] = useState<string>("");

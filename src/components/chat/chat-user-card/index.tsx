@@ -28,6 +28,7 @@ const ChatUsersCard = ({
           variant="dot"
           color="success"
           invisible={!chat.online}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         >
           <Avatar
             alt={chat.username}
@@ -55,6 +56,7 @@ const ChatUsersCard = ({
         {chat.lastMessage ? (
           <Typography
             variant="caption"
+            noWrap
             sx={{
               m: 0,
               lineHeight: 0,

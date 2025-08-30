@@ -5,9 +5,12 @@ import {
   Box,
   Button,
   Card,
+  Chip,
+  IconButton,
   InputAdornment,
   TextField,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import "./styles.css";
 import SendIcon from "@mui/icons-material/Send";
@@ -17,6 +20,9 @@ import type { IMessage } from "@/types/chat/message.types";
 import { useAppContext } from "@/components/app-provider/app-context";
 import { socket } from "@/api/socket.api";
 import getImageUrl from "@/api/image-url.api";
+import { groupMessagesByDate } from "@/utils/groupMessage";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import EmojiPicker, { type EmojiClickData, Theme } from "emoji-picker-react";
 
 const ChatRoom = ({
   currentRoomId,
@@ -28,11 +34,16 @@ const ChatRoom = ({
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [typing, setTyping] = useState<string[]>([]);
-  const chatBoxRef = useRef<HTMLDivElement | null>(null);
-  const { user } = useAppContext();
-  let typingTimeout: ReturnType<typeof setTimeout>;
-
   const [showTyping, setShowTyping] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
+
+  const chatBoxRef = useRef<HTMLDivElement | null>(null);
+  const pickerRef = useRef<HTMLDivElement | null>(null);
+
+  const { user } = useAppContext();
+  const { mode } = useColorScheme();
+
+  let typingTimeout: ReturnType<typeof setTimeout>;
 
   useEffect(() => {
     if (typing.length > 0) {
@@ -43,6 +54,9 @@ const ChatRoom = ({
       return () => clearTimeout(timeout);
     }
   }, [typing]);
+
+  const groupedMessage: Record<string, IMessage[]> =
+    groupMessagesByDate(messages);
 
   useEffect(() => {
     socket.on("receive_private_message", (message: IMessage) => {
@@ -115,6 +129,24 @@ const ChatRoom = ({
     };
   }, []);
 
+  // Close picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(event.target as Node)
+      ) {
+        setShowPicker(false);
+      }
+    };
+    if (showPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showPicker]);
+
   const sendPrivateMessage = () => {
     socket.emit("private_message", {
       toPrivateRoom: currentRoomId,
@@ -161,11 +193,12 @@ const ChatRoom = ({
     }
   };
 
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    setMessage((prev) => prev + emojiData.emoji);
+  };
+
   return (
-    <Card
-      className="chat-room-card"
-      sx={{ width: { xs: "100%", md: "  70%" } }}
-    >
+    <Card className="chat-room-card" sx={{ width: { xs: "100%", md: "75%" } }}>
       <Box className="chat-room-header">
         {currentChat.username ? (
           <Badge
@@ -173,6 +206,7 @@ const ChatRoom = ({
             variant="dot"
             color="success"
             invisible={!currentChat.online}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           >
             <Avatar
               alt={currentChat.username}
@@ -193,8 +227,22 @@ const ChatRoom = ({
         </Typography>
       </Box>
       <Box ref={chatBoxRef} id="chatBox" className="chat-box custom-scroll">
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
+        {Object.entries(groupedMessage).map(([date, groupedMessages]) => (
+          <div key={date}>
+            {/* Date Separator */}
+            <Box sx={{ textAlign: "center" }}>
+              <Chip
+                label={date}
+                size="small"
+                sx={{ fontSize: "0.75rem", padding: "0.25rem" }}
+              />
+            </Box>
+
+            {/* Messages */}
+            {groupedMessages.map((message) => (
+              <ChatMessage key={message.id} message={message} />
+            ))}
+          </div>
         ))}
       </Box>
 
@@ -220,6 +268,9 @@ const ChatRoom = ({
               input: {
                 endAdornment: (
                   <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPicker((prev) => !prev)}>
+                      <InsertEmoticonIcon />
+                    </IconButton>
                     <Button
                       onClick={sendPrivateMessage}
                       variant="text"
@@ -244,6 +295,22 @@ const ChatRoom = ({
               },
             }}
           />
+          {showPicker && (
+            <div
+              ref={pickerRef}
+              style={{
+                position: "absolute",
+                bottom: "60px", // push it above input
+                right: "50px", // align with button
+                zIndex: 1000,
+              }}
+            >
+              <EmojiPicker
+                onEmojiClick={handleEmojiClick}
+                theme={mode === "dark" ? Theme.DARK : Theme.LIGHT}
+              />
+            </div>
+          )}
         </form>
       </div>
     </Card>

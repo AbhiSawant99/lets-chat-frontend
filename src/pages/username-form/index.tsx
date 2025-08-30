@@ -45,6 +45,10 @@ const UsernameForm = () => {
     return () => clearTimeout(delayDebounce);
   }, [username]);
 
+  const changeUserImage = (file: File) => {
+    setPhoto(file);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -109,7 +113,7 @@ const UsernameForm = () => {
                 marginBottom: "1rem",
               }}
             >
-              <ProfileImageUploader savePhoto={setPhoto} />
+              <ProfileImageUploader savePhoto={changeUserImage} />
             </div>
             <div>
               <TextField
@@ -121,6 +125,7 @@ const UsernameForm = () => {
                 helperText="Use 4+ lowercase letters, numbers, or underscores"
                 error={touched && !validateUsername()}
                 fullWidth
+                required
               />
               {username && (
                 <Typography
@@ -165,9 +170,9 @@ const UsernameForm = () => {
                 gap: "0.5rem",
               }}
             >
-              <Button variant="text" color="info" type="button" fullWidth>
+              {/* <Button variant="text" color="info" type="button" fullWidth>
                 Skip
-              </Button>
+              </Button> */}
               <Button
                 variant="contained"
                 color="primary"

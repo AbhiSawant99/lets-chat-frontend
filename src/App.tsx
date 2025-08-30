@@ -1,10 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "@/App.css";
 import LoginPage from "@/pages/login";
-import ProfilePage from "@/pages/profile";
 import { lazy } from "react";
 import SignUp from "@/pages/sign-up";
 import { AppProvider } from "@/components/app-provider/app-provider";
+import NotFoundPage from "@/pages/not-found";
 
 const ChatPage = lazy(() => import("@/pages/chat"));
 const UsernameForm = lazy(() => import("@/pages/username-form"));
@@ -22,8 +22,8 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/username-form" element={WithProvider(UsernameForm)} />
-        <Route path="/profile" element={WithProvider(ProfilePage)} />
         <Route path="/chat" element={WithProvider(ChatPage)} />
+        <Route path="/*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
