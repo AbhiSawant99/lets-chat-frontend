@@ -12,6 +12,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 import "./style.css";
 import { useState } from "react";
 import { requestLogin } from "@/api/auth.api";
+import { BASE_URL } from "@/api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ const LoginPage = () => {
             <Divider sx={{ flexGrow: 1, bgcolor: "#333" }} />
           </Box>
           <Button
-            href="http://localhost:3000/auth/google"
+            href={`${BASE_URL}/auth/google`}
             variant="outlined"
             fullWidth
             className="google-btn"

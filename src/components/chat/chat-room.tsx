@@ -20,7 +20,7 @@ import type { IMessage } from "@/types/chat/message.types";
 import { useAppContext } from "@/components/app-provider/app-context";
 import { socket } from "@/api/socket.api";
 import getImageUrl from "@/api/image-url.api";
-import { groupMessagesByDate } from "@/utils/groupMessage";
+import { groupMessagesByDate } from "@/utils/group-message-by-date";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import EmojiPicker, { type EmojiClickData, Theme } from "emoji-picker-react";
 
