@@ -23,13 +23,18 @@ import getImageUrl from "@/api/image-url.api";
 import { groupMessagesByDate } from "@/utils/group-message-by-date";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import EmojiPicker, { type EmojiClickData, Theme } from "emoji-picker-react";
+import ChatRoomSkeleton from "@/components/chat/chat-room-skeleton";
 
 const ChatRoom = ({
   currentRoomId,
   currentChat,
+  loadingChat,
+  setLoadingChat,
 }: {
   currentRoomId: string;
   currentChat: IChat;
+  loadingChat: boolean;
+  setLoadingChat: (loading: boolean) => void;
 }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -93,6 +98,7 @@ const ChatRoom = ({
       socket.emit("mark_history_message_seen", {
         toPrivateRoom: currentRoomId,
       });
+      setTimeout(() => setLoadingChat(false), 500);
     });
 
     socket.on("history_message_seen", (messages: IMessage[]) => {
@@ -226,25 +232,29 @@ const ChatRoom = ({
             : "Select Chat"}
         </Typography>
       </Box>
-      <Box ref={chatBoxRef} id="chatBox" className="chat-box custom-scroll">
-        {Object.entries(groupedMessage).map(([date, groupedMessages]) => (
-          <div key={date}>
-            {/* Date Separator */}
-            <Box sx={{ textAlign: "center" }}>
-              <Chip
-                label={date}
-                size="small"
-                sx={{ fontSize: "0.75rem", padding: "0.25rem" }}
-              />
-            </Box>
+      {loadingChat ? (
+        <ChatRoomSkeleton />
+      ) : (
+        <Box ref={chatBoxRef} id="chatBox" className="chat-box custom-scroll">
+          {Object.entries(groupedMessage).map(([date, groupedMessages]) => (
+            <div key={date}>
+              {/* Date Separator */}
+              <Box sx={{ textAlign: "center" }}>
+                <Chip
+                  label={date}
+                  size="small"
+                  sx={{ fontSize: "0.75rem", padding: "0.25rem" }}
+                />
+              </Box>
 
-            {/* Messages */}
-            {groupedMessages.map((message) => (
-              <ChatMessage key={message.id} message={message} />
-            ))}
-          </div>
-        ))}
-      </Box>
+              {/* Messages */}
+              {groupedMessages.map((message) => (
+                <ChatMessage key={message.id} message={message} />
+              ))}
+            </div>
+          ))}
+        </Box>
+      )}
 
       <div className="chat-bottom">
         {showTyping ? (

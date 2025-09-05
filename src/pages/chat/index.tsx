@@ -13,6 +13,7 @@ const ChatPage = () => {
   const [currentChat, setCurrentChat] = useState<IChat>({} as IChat);
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
+  const [loadingChat, setLoadingChat] = useState(false);
 
   const setPrivateMessageId = (roomId: string) => {
     setCurrentRoomId(roomId);
@@ -25,9 +26,15 @@ const ChatPage = () => {
           setPrivateMessageId={setPrivateMessageId}
           setCurrentChat={setCurrentChat}
           currentChat={currentChat}
+          setLoadingChat={setLoadingChat}
         />
         {!isSmall && currentChat?.userId && (
-          <ChatRoom currentRoomId={currentRoomId} currentChat={currentChat} />
+          <ChatRoom
+            currentRoomId={currentRoomId}
+            currentChat={currentChat}
+            loadingChat={loadingChat}
+            setLoadingChat={setLoadingChat}
+          />
         )}
         {!isSmall && !currentChat?.userId && <SelectChat />}
         {isSmall && currentChat?.userId && (
@@ -36,6 +43,8 @@ const ChatPage = () => {
               <ChatRoom
                 currentRoomId={currentRoomId}
                 currentChat={currentChat}
+                loadingChat={loadingChat}
+                setLoadingChat={setLoadingChat}
               />
             }
           />

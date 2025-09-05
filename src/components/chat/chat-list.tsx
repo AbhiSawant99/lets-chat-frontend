@@ -22,10 +22,12 @@ const ChatList = ({
   setPrivateMessageId,
   setCurrentChat,
   currentChat,
+  setLoadingChat,
 }: {
   setPrivateMessageId: (userId: string) => void;
   setCurrentChat: (chat: IChat) => void;
   currentChat: IChat;
+  setLoadingChat: (loading: boolean) => void;
 }) => {
   const [chatList, setChatList] = useState<IChat[]>([]);
   const [search, setSearch] = useState<string>("");
@@ -214,6 +216,7 @@ const ChatList = ({
 
   const openChat = (chat: IChat) => {
     if (!chat.roomId) return;
+    setLoadingChat(true);
     setPrivateMessageId(chat.roomId);
     setCurrentChat(chat);
     socket.emit("join_private_room", chat.roomId);
