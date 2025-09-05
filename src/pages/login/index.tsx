@@ -17,11 +17,13 @@ import { BASE_URL } from "@/api";
 const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setError(null);
+    setLoading(true);
     const formData = new FormData(event.target as HTMLFormElement);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
@@ -29,13 +31,15 @@ const LoginPage = () => {
     try {
       const userData = await requestLogin(email, password);
       localStorage.setItem("user", JSON.stringify(userData.user));
-      navigate("/chat");
+      setLoading(false);
+      navigate(userData.navigate);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("An unknown error occurred");
       }
+      setLoading(false);
     }
   };
 
@@ -90,6 +94,7 @@ const LoginPage = () => {
               variant="contained"
               fullWidth
               className="login-btn"
+              loading={loading}
             >
               LOGIN
             </Button>

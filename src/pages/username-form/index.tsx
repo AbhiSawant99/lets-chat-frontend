@@ -13,6 +13,7 @@ const UsernameForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState("");
   const [availability, setAvailability] = useState<null | boolean>(null);
+  const [checkingUsername, setCheckingUsername] = useState(false);
   const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const { setUser } = useAppContext();
@@ -30,7 +31,7 @@ const UsernameForm = () => {
     }
 
     const delayDebounce = setTimeout(async () => {
-      setLoading(true);
+      setCheckingUsername(true);
       try {
         const data = await checkUsernameAvailability(username);
         setAvailability(data.available);
@@ -38,7 +39,7 @@ const UsernameForm = () => {
         console.error(err);
         setAvailability(false);
       } finally {
-        setLoading(false);
+        setCheckingUsername(false);
       }
     }, 500); // wait 500ms after user stops typing
 
@@ -53,6 +54,7 @@ const UsernameForm = () => {
     event.preventDefault();
 
     setError(null);
+    setLoading(true);
     const formData = new FormData(event.target as HTMLFormElement);
     if (photo) {
       formData.append("photo", photo);
@@ -66,12 +68,14 @@ const UsernameForm = () => {
         JSON.stringify(saveUserDetailsResponse.user)
       );
       navigate("/chat");
+      setLoading(false);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("An unknown error occurred");
       }
+      setLoading(false);
     }
   };
 
@@ -144,7 +148,7 @@ const UsernameForm = () => {
                     marginTop: "0.5rem",
                   }}
                 >
-                  {loading ? (
+                  {checkingUsername ? (
                     "Checking..."
                   ) : availability === null ? (
                     ""
@@ -179,6 +183,7 @@ const UsernameForm = () => {
                 type="submit"
                 fullWidth
                 disabled={!(availability && validateUsername())}
+                loading={loading}
               >
                 Save
               </Button>

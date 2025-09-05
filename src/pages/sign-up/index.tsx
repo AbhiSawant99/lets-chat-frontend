@@ -7,11 +7,13 @@ import { requestSignup } from "@/api/auth.api";
 const SignUp = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setError(null);
+    setLoading(true);
     const formData = new FormData(event.target as HTMLFormElement);
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
@@ -20,12 +22,14 @@ const SignUp = () => {
     try {
       await requestSignup({ name, email, password });
       navigate("/username-form");
+      setLoading(false);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("An unknown error occurred");
       }
+      setLoading(false);
     }
   };
 
@@ -71,7 +75,13 @@ const SignUp = () => {
               fullWidth
               required
             />
-            <Button variant="contained" color="primary" type="submit" fullWidth>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              fullWidth
+              loading={loading}
+            >
               Sign Up
             </Button>
           </Box>
