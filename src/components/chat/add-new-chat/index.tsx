@@ -1,4 +1,10 @@
-import { InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import {
+  InputAdornment,
+  LinearProgress,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import type { IChat } from "@/types/chat/chat.types";
@@ -15,11 +21,16 @@ const AddNewChat = ({
 }) => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState<IChat[]>([]);
+  const [loadingChatList, setLoadingChatList] = useState(false);
+  const [firstSearchComplete, setFirstSearchComplete] = useState(false);
 
   useEffect(() => {
     if (search.length > 2) {
+      setLoadingChatList(true);
       searchChats(search).then((response) => {
         setSearchResult(response);
+        setFirstSearchComplete(true);
+        setLoadingChatList(false);
       });
     }
   }, [search]);
@@ -39,7 +50,12 @@ const AddNewChat = ({
           </Typography>
         </div>
       );
-    } else if (search && searchResult.length == 0) {
+    } else if (
+      firstSearchComplete &&
+      !loadingChatList &&
+      search &&
+      searchResult.length == 0
+    ) {
       return (
         <div>
           <Typography
@@ -53,7 +69,7 @@ const AddNewChat = ({
           </Typography>
         </div>
       );
-    } else {
+    } else if (firstSearchComplete && search && searchResult.length > 0) {
       return (
         <Stack className="search-chat-list custom-scroll">
           {searchResult.length > 0 &&
@@ -80,6 +96,8 @@ const AddNewChat = ({
               ))}
         </Stack>
       );
+    } else {
+      return <></>;
     }
   };
 
@@ -109,7 +127,12 @@ const AddNewChat = ({
           },
         }}
       />
-      {showResult()}
+      {loadingChatList && (
+        <LinearProgress
+          sx={{ m: "0.5rem", borderRadius: "1rem", mb: "0rem" }}
+        />
+      )}
+      {(!loadingChatList || firstSearchComplete) && showResult()}
     </div>
   );
 };

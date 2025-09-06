@@ -14,6 +14,7 @@ const ChatPage = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const [loadingChat, setLoadingChat] = useState(false);
+  const [drwaerOpen, setDrawerOpen] = useState(true);
 
   const setPrivateMessageId = (roomId: string) => {
     setCurrentRoomId(roomId);
@@ -27,6 +28,7 @@ const ChatPage = () => {
           setCurrentChat={setCurrentChat}
           currentChat={currentChat}
           setLoadingChat={setLoadingChat}
+          setDrawerOpen={setDrawerOpen}
         />
         {!isSmall && currentChat?.userId && (
           <ChatRoom
@@ -39,7 +41,9 @@ const ChatPage = () => {
         {!isSmall && !currentChat?.userId && <SelectChat />}
         {isSmall && currentChat?.userId && (
           <StickyChatDrawer
-            children={
+            open={drwaerOpen}
+            setOpen={setDrawerOpen}
+            content={
               <ChatRoom
                 currentRoomId={currentRoomId}
                 currentChat={currentChat}

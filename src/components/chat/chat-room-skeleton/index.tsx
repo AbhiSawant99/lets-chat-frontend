@@ -1,4 +1,4 @@
-import { alpha, Box, Card, Skeleton } from "@mui/material";
+import { alpha, Box, Skeleton } from "@mui/material";
 import "@/components/chat/chat-message/styles.css";
 import "@/components/chat/styles.css";
 
@@ -6,9 +6,9 @@ const ChatRoomSkeleton = () => {
   return (
     <Box className="chat-box">
       <div className="message-container message-container-self">
-        <Card
+        <div
           className="message-self"
-          sx={{ width: "25rem", height: "3.75rem", padding: "0.75rem" }}
+          style={{ width: "25%", height: "3.25rem", padding: "0.75rem" }}
         >
           <Skeleton
             variant="text"
@@ -19,24 +19,24 @@ const ChatRoomSkeleton = () => {
           />
           <Box
             className="message-timestamp"
-            sx={{ display: "flex", justifyContent: "flex-end" }}
+            style={{ display: "flex", justifyContent: "flex-end" }}
           >
             <Skeleton
               variant="text"
               width={50}
               sx={(theme) => ({
-                fontSize: "0.75rem",
+                fontSize: "0.5rem",
                 textAlign: "right",
                 bgcolor: alpha(theme.palette.messageOther.text, 0.2),
               })}
             />
           </Box>
-        </Card>
+        </div>
       </div>
       <div className="message-container message-container-other">
-        <Card
+        <div
           className="message-other"
-          sx={{ width: "25rem", height: "3.75rem", padding: "0.75rem" }}
+          style={{ width: "50%", height: "3.25rem", padding: "0.75rem" }}
         >
           <Skeleton
             variant="text"
@@ -47,24 +47,24 @@ const ChatRoomSkeleton = () => {
           />
           <Box
             className="message-timestamp"
-            sx={{ display: "flex", justifyContent: "flex-end" }}
+            style={{ display: "flex", justifyContent: "flex-end" }}
           >
             <Skeleton
               variant="text"
               width={50}
               sx={(theme) => ({
-                fontSize: "0.75rem",
+                fontSize: "0.5rem",
                 textAlign: "right",
                 bgcolor: alpha(theme.palette.messageOther.text, 0.2),
               })}
             />
           </Box>
-        </Card>
+        </div>
       </div>
       <div className="message-container message-container-self">
-        <Card
+        <div
           className="message-self"
-          sx={{ width: "25rem", height: "3.75rem", padding: "0.75rem" }}
+          style={{ width: "45%", height: "3.25rem", padding: "0.75rem" }}
         >
           <Skeleton
             variant="text"
@@ -75,24 +75,24 @@ const ChatRoomSkeleton = () => {
           />
           <Box
             className="message-timestamp"
-            sx={{ display: "flex", justifyContent: "flex-end" }}
+            style={{ display: "flex", justifyContent: "flex-end" }}
           >
             <Skeleton
               variant="text"
               width={50}
               sx={(theme) => ({
-                fontSize: "0.75rem",
+                fontSize: "0.5rem",
                 textAlign: "right",
                 bgcolor: alpha(theme.palette.messageOther.text, 0.2),
               })}
             />
           </Box>
-        </Card>
+        </div>
       </div>
       <div className="message-container message-container-other">
-        <Card
+        <div
           className="message-other"
-          sx={{ width: "25rem", height: "3.75rem", padding: "0.75rem" }}
+          style={{ width: "20%", height: "3.25rem", padding: "0.75rem" }}
         >
           <Skeleton
             variant="text"
@@ -103,19 +103,19 @@ const ChatRoomSkeleton = () => {
           />
           <Box
             className="message-timestamp"
-            sx={{ display: "flex", justifyContent: "flex-end" }}
+            style={{ display: "flex", justifyContent: "flex-end" }}
           >
             <Skeleton
               variant="text"
               width={50}
               sx={(theme) => ({
-                fontSize: "0.75rem",
+                fontSize: "0.5rem",
                 textAlign: "right",
                 bgcolor: alpha(theme.palette.messageOther.text, 0.2),
               })}
             />
           </Box>
-        </Card>
+        </div>
       </div>
     </Box>
   );

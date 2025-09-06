@@ -13,14 +13,14 @@ const Puller = styled("div")(({ theme }) => ({
   left: "calc(50% - 15px)",
 }));
 
-const drawerHeight = 90; // percentage of screen
+// this version
 
 interface Props {
-  children: React.ReactNode;
+  content: React.ReactNode;
+  open: boolean;
+  setOpen: (value: boolean) => void;
 }
-export default function StickyChatDrawer({ children }: Props) {
-  const [open, setOpen] = React.useState(true);
-
+export default function StickyChatDrawer({ content, open, setOpen }: Props) {
   return (
     <SwipeableDrawer
       anchor="bottom"
@@ -31,17 +31,20 @@ export default function StickyChatDrawer({ children }: Props) {
       keepMounted // <= keep the children mounted in DOM
       PaperProps={{
         sx: {
-          height: `${drawerHeight}vh`, // covers 90% of screen height
           borderTopLeftRadius: 12,
           borderTopRightRadius: 12,
           overflow: "hidden",
         },
       }}
     >
-      <Box sx={{ position: "relative", pt: 1 }}>
+      <Box
+        sx={{
+          position: "relative",
+        }}
+      >
         <Puller />
       </Box>
-      <Box sx={{ height: "100%", overflowY: "auto" }}>{children}</Box>
+      <Box sx={{ height: "100%", overflowY: "auto" }}>{content}</Box>
     </SwipeableDrawer>
   );
 }

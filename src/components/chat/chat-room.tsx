@@ -23,7 +23,7 @@ import getImageUrl from "@/api/image-url.api";
 import { groupMessagesByDate } from "@/utils/group-message-by-date";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import EmojiPicker, { type EmojiClickData, Theme } from "emoji-picker-react";
-import ChatRoomSkeleton from "@/components/chat/chat-room-skeleton";
+import EmojiLoader from "@/components/confetti-bounce-loader";
 
 const ChatRoom = ({
   currentRoomId,
@@ -48,7 +48,7 @@ const ChatRoom = ({
   const { user } = useAppContext();
   const { mode } = useColorScheme();
 
-  let typingTimeout: ReturnType<typeof setTimeout>;
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (typing.length > 0) {
@@ -89,16 +89,17 @@ const ChatRoom = ({
 
     socket.on("chat_history", (message: IMessage[]) => {
       setMessages(message);
-      setTimeout(() => {
-        if (chatBoxRef.current) {
-          chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-        }
-      }, 500);
 
       socket.emit("mark_history_message_seen", {
         toPrivateRoom: currentRoomId,
       });
-      setTimeout(() => setLoadingChat(false), 500);
+      setTimeout(() => setLoadingChat(false), 300);
+
+      setTimeout(() => {
+        if (chatBoxRef.current) {
+          chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+      }, 600);
     });
 
     socket.on("history_message_seen", (messages: IMessage[]) => {
@@ -170,10 +171,10 @@ const ChatRoom = ({
     });
     setMessage(e.target.value);
 
-    if (typingTimeout) clearTimeout(typingTimeout);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
 
     // start a new timer — if no key pressed for 1.5 sec → send "stopTyping"
-    typingTimeout = setTimeout(() => {
+    typingTimeoutRef.current = setTimeout(() => {
       socket.emit("stopTyping", {
         roomId: currentRoomId,
         username: user?.displayName,
@@ -232,11 +233,11 @@ const ChatRoom = ({
             : "Select Chat"}
         </Typography>
       </Box>
-      {loadingChat ? (
-        <ChatRoomSkeleton />
-      ) : (
-        <Box ref={chatBoxRef} id="chatBox" className="chat-box custom-scroll">
-          {Object.entries(groupedMessage).map(([date, groupedMessages]) => (
+      <Box ref={chatBoxRef} id="chatBox" className="chat-box custom-scroll">
+        {loadingChat ? (
+          <EmojiLoader />
+        ) : (
+          Object.entries(groupedMessage).map(([date, groupedMessages]) => (
             <div key={date}>
               {/* Date Separator */}
               <Box sx={{ textAlign: "center" }}>
@@ -252,12 +253,12 @@ const ChatRoom = ({
                 <ChatMessage key={message.id} message={message} />
               ))}
             </div>
-          ))}
-        </Box>
-      )}
+          ))
+        )}
+      </Box>
 
       <div className="chat-bottom">
-        {showTyping ? (
+        {showTyping && typing.length > 0 ? (
           <Typography
             variant="caption"
             className={`typing-text ${typing.length > 0 ? "" : "typing-exit"}`}

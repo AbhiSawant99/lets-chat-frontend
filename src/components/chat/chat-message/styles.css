@@ -1,6 +1,5 @@
 .message-container {
   display: flex;
-  margin-bottom: 0.5rem;
   padding: 6px 10px;
 }
 
@@ -31,11 +30,15 @@
 }
 
 .message-other .message-timestamp {
+  display: flex;
+  justify-content: flex-end;
   text-align: right;
   color: var(--mui-palette-messageOther-subtext);
 }
 
 .message-self .message-timestamp {
+  display: flex;
+  justify-content: flex-end;
   text-align: right;
   color: var(--mui-palette-messageSelf-subtext);
 }

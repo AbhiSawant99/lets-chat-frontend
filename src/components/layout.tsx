@@ -31,7 +31,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       <Drawer
         variant="permanent"
         sx={{
-          height: "100vh",
+          height: "100dvh",
           width: "3.5rem",
           padding: "0.5rem 0rem",
           "& .MuiDrawer-paper": {

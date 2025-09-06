@@ -17,23 +17,31 @@ import { useAppContext } from "@/components/app-provider/app-context";
 import { socket } from "@/api/socket.api";
 import type { IMessage } from "@/types/chat/message.types";
 import Modal from "@/components/modal";
+import ChatListSkeleton from "@/components/chat/chat-list-skeleton";
 
 const ChatList = ({
   setPrivateMessageId,
   setCurrentChat,
   currentChat,
   setLoadingChat,
+  setDrawerOpen,
 }: {
   setPrivateMessageId: (userId: string) => void;
   setCurrentChat: (chat: IChat) => void;
   currentChat: IChat;
   setLoadingChat: (loading: boolean) => void;
+  setDrawerOpen: (loading: boolean) => void;
 }) => {
   const [chatList, setChatList] = useState<IChat[]>([]);
   const [search, setSearch] = useState<string>("");
   const [showAddChat, setShowAddChat] = useState<boolean>(false);
   const { user } = useAppContext();
+  const [loadingChatList, setLoadingChatList] = useState(true);
   const hasConnectedRef = useRef(false);
+
+  const stopLoading = () => {
+    setTimeout(() => setLoadingChatList(false), 250);
+  };
 
   useEffect(() => {
     if (user && !hasConnectedRef.current) {
@@ -45,9 +53,11 @@ const ChatList = ({
   useEffect(() => {
     socket.on("chats", (chat) => {
       setChatList(chat);
+      stopLoading();
     });
 
     socket.on("receive_private_notification", (message: IMessage) => {
+      setLoadingChat(true);
       setChatList((prev) => {
         if (prev.some((chat) => chat.id === message.chatId)) {
           // find the chat and update it
@@ -76,9 +86,12 @@ const ChatList = ({
             (chat) => chat.id !== message.chatId
           );
 
+          stopLoading();
+
           return [updatedChat, ...remainingChats];
         } else {
           addNewChat(message);
+          stopLoading();
           return prev;
         }
       });
@@ -134,9 +147,11 @@ const ChatList = ({
     });
 
     socket.on("chat_created", (chat: IChat) => {
+      setLoadingChat(true);
       setChatList((prev) =>
         prev.some((oldChat) => oldChat.id === chat.id) ? prev : [chat, ...prev]
       );
+      stopLoading();
     });
 
     socket.on("history_message_seen", (messages: IMessage[]) => {
@@ -205,18 +220,21 @@ const ChatList = ({
   }, [user]);
 
   const addNewChat = (message: IMessage) => {
+    setLoadingChatList(true);
     getChat(message.chatId).then((response) => {
       const newChat: IChat = response;
 
       setChatList((prev) =>
-        prev.some((chat) => chat.id === newChat.id) ? prev : [...prev, newChat]
+        prev.some((chat) => chat.id === newChat.id) ? prev : [newChat, ...prev]
       );
+      setLoadingChatList(false);
     });
   };
 
   const openChat = (chat: IChat) => {
     if (!chat.roomId) return;
     setLoadingChat(true);
+    setDrawerOpen(true);
     setPrivateMessageId(chat.roomId);
     setCurrentChat(chat);
     socket.emit("join_private_room", chat.roomId);
@@ -265,30 +283,34 @@ const ChatList = ({
             }}
           />
         </div>
-        <Stack className="chat-list custom-scroll">
-          {chatList.length > 0 &&
-            chatList
-              .filter((c) => {
-                if (search && search.length > 0) {
-                  return c.username
-                    .trim()
-                    .toLocaleLowerCase()
-                    .includes(search.trim().toLocaleLowerCase());
-                } else {
-                  return true;
-                }
-              })
-              .map((chat, index) => (
-                <ChatUsersCard
-                  key={index}
-                  chat={chat}
-                  onClick={() => openChat(chat)}
-                  self={chat.userId === user?.id}
-                  currentChat={chat.userId === currentChat.userId}
-                  user={user}
-                />
-              ))}
-        </Stack>
+        {loadingChatList ? (
+          <ChatListSkeleton />
+        ) : (
+          <Stack className="chat-list custom-scroll">
+            {chatList.length > 0 &&
+              chatList
+                .filter((c) => {
+                  if (search && search.length > 0) {
+                    return c.username
+                      .trim()
+                      .toLocaleLowerCase()
+                      .includes(search.trim().toLocaleLowerCase());
+                  } else {
+                    return true;
+                  }
+                })
+                .map((chat, index) => (
+                  <ChatUsersCard
+                    key={index}
+                    chat={chat}
+                    onClick={() => openChat(chat)}
+                    self={chat.userId === user?.id}
+                    currentChat={chat.userId === currentChat.userId}
+                    user={user}
+                  />
+                ))}
+          </Stack>
+        )}
       </Card>
 
       <Modal

@@ -18,18 +18,25 @@ const ChatMessage = React.memo(({ message }: { message: IMessage }) => {
         elevation={0}
       >
         <CardContent className="message-content">
-          <Typography variant="body2">{message.message}</Typography>
+          <Typography variant="body2" sx={{ display: "block" }}>
+            {message.message}
+          </Typography>
           <div className="message-timestamp">
             <Typography
               variant="caption"
-              sx={{ fontSize: "0.6rem", letterSpacing: "0" }}
+              sx={{ fontSize: "0.6rem", letterSpacing: "0", display: "block" }}
             >
               {date}
             </Typography>
             {user?.displayName === message.from && (
               <Typography
                 variant="caption"
-                sx={{ fontSize: "0.6rem", letterSpacing: "0", ml: "0.25rem" }}
+                sx={{
+                  fontSize: "0.6rem",
+                  letterSpacing: "0",
+                  ml: "0.25rem",
+                  display: "block",
+                }}
               >
                 {message.status}
               </Typography>
