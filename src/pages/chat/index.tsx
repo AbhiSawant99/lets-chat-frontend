@@ -14,10 +14,15 @@ const ChatPage = () => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const [loadingChat, setLoadingChat] = useState(false);
-  const [drwaerOpen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(true);
 
   const setPrivateMessageId = (roomId: string) => {
     setCurrentRoomId(roomId);
+  };
+
+  const onDrawerClose = () => {
+    setCurrentChat({} as IChat);
+    setCurrentRoomId("");
   };
 
   return (
@@ -41,8 +46,9 @@ const ChatPage = () => {
         {!isSmall && !currentChat?.userId && <SelectChat />}
         {isSmall && currentChat?.userId && (
           <StickyChatDrawer
-            open={drwaerOpen}
+            open={drawerOpen}
             setOpen={setDrawerOpen}
+            onClose={onDrawerClose}
             content={
               <ChatRoom
                 currentRoomId={currentRoomId}

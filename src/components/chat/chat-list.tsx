@@ -1,4 +1,6 @@
 import {
+  Avatar,
+  Box,
   Card,
   IconButton,
   InputAdornment,
@@ -18,6 +20,8 @@ import { socket } from "@/api/socket.api";
 import type { IMessage } from "@/types/chat/message.types";
 import Modal from "@/components/modal";
 import ChatListSkeleton from "@/components/chat/chat-list-skeleton";
+import { useSnackbar } from "@/components/snackbar-provider/snackbar-context";
+import getImageUrl from "@/api/image-url.api";
 
 const ChatList = ({
   setPrivateMessageId,
@@ -36,8 +40,30 @@ const ChatList = ({
   const [search, setSearch] = useState<string>("");
   const [showAddChat, setShowAddChat] = useState<boolean>(false);
   const { user } = useAppContext();
+  const { showSnackbar } = useSnackbar();
   const [loadingChatList, setLoadingChatList] = useState(true);
   const hasConnectedRef = useRef(false);
+
+  const chatMessageNotification = (chat: IChat, message: IMessage) => {
+    return (
+      <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <Avatar
+          alt={chat.username}
+          src={`${getImageUrl(chat.photo)}`}
+          sx={{ width: "2rem", height: "2rem" }}
+          slotProps={{
+            img: {
+              loading: "lazy",
+            },
+          }}
+        />
+        <div>
+          <Typography variant="body2">{chat.username}</Typography>
+          <Typography variant="caption">{message.message}</Typography>
+        </div>
+      </Box>
+    );
+  };
 
   const stopLoading = () => {
     setTimeout(() => setLoadingChatList(false), 250);
@@ -57,7 +83,6 @@ const ChatList = ({
     });
 
     socket.on("receive_private_notification", (message: IMessage) => {
-      setLoadingChat(true);
       setChatList((prev) => {
         if (prev.some((chat) => chat.id === message.chatId)) {
           // find the chat and update it
@@ -87,6 +112,13 @@ const ChatList = ({
           );
 
           stopLoading();
+
+          showSnackbar(
+            chatMessageNotification(updatedChat, message),
+            "info",
+            () => openChat(updatedChat),
+            false
+          );
 
           return [updatedChat, ...remainingChats];
         } else {
@@ -138,16 +170,12 @@ const ChatList = ({
           );
 
           return [updatedChat, ...remainingChats];
-        } else {
-          // new chat → add normally
-          addNewChat(message);
-          return prev;
         }
+        return prev;
       });
     });
 
     socket.on("chat_created", (chat: IChat) => {
-      setLoadingChat(true);
       setChatList((prev) =>
         prev.some((oldChat) => oldChat.id === chat.id) ? prev : [chat, ...prev]
       );
@@ -220,14 +248,19 @@ const ChatList = ({
   }, [user]);
 
   const addNewChat = (message: IMessage) => {
-    setLoadingChatList(true);
     getChat(message.chatId).then((response) => {
       const newChat: IChat = response;
 
       setChatList((prev) =>
         prev.some((chat) => chat.id === newChat.id) ? prev : [newChat, ...prev]
       );
-      setLoadingChatList(false);
+
+      showSnackbar(
+        chatMessageNotification(newChat, message),
+        "info",
+        () => openChat(newChat),
+        false
+      );
     });
   };
 

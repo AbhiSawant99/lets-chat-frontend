@@ -23,7 +23,7 @@ import getImageUrl from "@/api/image-url.api";
 import { groupMessagesByDate } from "@/utils/group-message-by-date";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import EmojiPicker, { type EmojiClickData, Theme } from "emoji-picker-react";
-import EmojiLoader from "@/components/confetti-bounce-loader";
+import ConfettiBounceLoader from "@/components/confetti-bounce-loader";
 
 const ChatRoom = ({
   currentRoomId,
@@ -235,7 +235,7 @@ const ChatRoom = ({
       </Box>
       <Box ref={chatBoxRef} id="chatBox" className="chat-box custom-scroll">
         {loadingChat ? (
-          <EmojiLoader />
+          <ConfettiBounceLoader />
         ) : (
           Object.entries(groupedMessage).map(([date, groupedMessages]) => (
             <div key={date}>
@@ -312,7 +312,7 @@ const ChatRoom = ({
               style={{
                 position: "absolute",
                 bottom: "60px", // push it above input
-                right: "50px", // align with button
+                right: "0px", // align with button
                 zIndex: 1000,
               }}
             >

@@ -13,26 +13,36 @@ const Puller = styled("div")(({ theme }) => ({
   left: "calc(50% - 15px)",
 }));
 
-// this version
-
 interface Props {
   content: React.ReactNode;
   open: boolean;
   setOpen: (value: boolean) => void;
+  onClose?: () => void;
 }
-export default function StickyChatDrawer({ content, open, setOpen }: Props) {
+export default function StickyChatDrawer({
+  content,
+  open,
+  setOpen,
+  onClose,
+}: Props) {
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+
+    setOpen(false);
+  };
+
   return (
     <SwipeableDrawer
       anchor="bottom"
       open={open}
       onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
+      onClose={handleClose}
       swipeAreaWidth={30}
-      keepMounted // <= keep the children mounted in DOM
       PaperProps={{
         sx: {
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 12,
+          borderRadius: "1rem",
           overflow: "hidden",
         },
       }}
