@@ -1,16 +1,11 @@
-import {
-  InputAdornment,
-  LinearProgress,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { InputAdornment, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import type { IChat } from "@/types/chat/chat.types";
 import { searchChats } from "@/api/chat.api";
 import ChatUsersCard from "@/components/chat/chat-user-card";
 import "./styles.css";
+import ConfettiBounceLoader from "@/components/confetti-bounce-loader";
 
 const AddNewChat = ({
   openChat,
@@ -127,11 +122,7 @@ const AddNewChat = ({
           },
         }}
       />
-      {loadingChatList && (
-        <LinearProgress
-          sx={{ m: "0.5rem", borderRadius: "1rem", mb: "0rem" }}
-        />
-      )}
+      {loadingChatList && <ConfettiBounceLoader />}
       {(!loadingChatList || firstSearchComplete) && showResult()}
     </div>
   );

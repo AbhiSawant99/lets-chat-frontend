@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Avatar,
   Badge,
@@ -24,6 +24,7 @@ import { groupMessagesByDate } from "@/utils/group-message-by-date";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import EmojiPicker, { type EmojiClickData, Theme } from "emoji-picker-react";
 import ConfettiBounceLoader from "@/components/confetti-bounce-loader";
+import { useSnackbar } from "@/components/snackbar-provider/snackbar-context";
 
 const ChatRoom = ({
   currentRoomId,
@@ -47,6 +48,7 @@ const ChatRoom = ({
 
   const { user } = useAppContext();
   const { mode } = useColorScheme();
+  const { showSnackbar } = useSnackbar();
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -128,8 +130,21 @@ const ChatRoom = ({
       setTyping((prev) => prev.filter((u) => u !== username));
     });
 
+    socket.on("errorMessage", (error: { error: string }) => {
+      showSnackbar(error.error, "error");
+    });
+
+    socket.on("message_deleted_private", (message: IMessage) => {
+      setMessages((prev) =>
+        prev.map((oldMessage) =>
+          oldMessage.id === message.id ? message : oldMessage
+        )
+      );
+    });
+
     return () => {
       socket.off("receive_private_message");
+      socket.off("message_deleted_private");
       socket.off("chat_history");
       socket.off("typing");
       socket.off("stopTyping");
@@ -204,6 +219,15 @@ const ChatRoom = ({
     setMessage((prev) => prev + emojiData.emoji);
   };
 
+  const handleDelete = useCallback(async (id: string) => {
+    if (!id) return;
+
+    socket.emit("delete_private_message", {
+      toPrivateRoom: currentRoomId,
+      messageId: id,
+    });
+  }, []);
+
   return (
     <Card className="chat-room-card" sx={{ width: { xs: "100%", md: "75%" } }}>
       <Box className="chat-room-header">
@@ -250,7 +274,11 @@ const ChatRoom = ({
 
               {/* Messages */}
               {groupedMessages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
+                <ChatMessage
+                  key={message.id}
+                  message={message}
+                  handleDelete={handleDelete}
+                />
               ))}
             </div>
           ))

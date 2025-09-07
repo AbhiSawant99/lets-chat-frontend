@@ -20,7 +20,8 @@ export default function ConfettiBounceLoader() {
         display: "flex",
         justifyContent: "center",
         gap: 1.5,
-        height: 80,
+        height: 50,
+        marginBottom: "1.5rem",
         alignItems: "flex-end",
       }}
     >

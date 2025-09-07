@@ -140,7 +140,7 @@ const ChatList = ({
       );
     });
 
-    socket.on("receive_private_message", (message: IMessage) => {
+    socket.on("receive_private_message_list", (message: IMessage) => {
       setChatList((prev) => {
         if (prev.some((chat) => chat.id === message.chatId)) {
           // find the chat and update it
@@ -236,6 +236,68 @@ const ChatList = ({
       });
     });
 
+    socket.on("message_deleted_private_list", (message: IMessage) => {
+      setChatList((prev) => {
+        const updatedChatList = prev.map((chat) =>
+          chat.id === message.chatId && chat.lastMessage?.id === message.id
+            ? {
+                ...chat,
+                lastMessage: {
+                  chatId: message.chatId,
+                  from: message.from,
+                  id: message.id,
+                  message: message.message,
+                  status: message.status,
+                  createdAt: message.createdAt,
+                  readBy: message.readBy,
+                },
+              }
+            : chat
+        );
+
+        // move the updated chat to the top
+        const updatedChat = updatedChatList.find(
+          (chat) => chat.id === message.chatId
+        )!;
+        const remainingChats = updatedChatList.filter(
+          (chat) => chat.id !== message.chatId
+        );
+
+        return [updatedChat, ...remainingChats];
+      });
+    });
+
+    socket.on("message_deleted_private_notification", (message: IMessage) => {
+      setChatList((prev) => {
+        const updatedChatList = prev.map((chat) =>
+          chat.id === message.chatId && chat.lastMessage?.id === message.id
+            ? {
+                ...chat,
+                lastMessage: {
+                  chatId: message.chatId,
+                  from: message.from,
+                  id: message.id,
+                  message: message.message,
+                  status: message.status,
+                  createdAt: message.createdAt,
+                  readBy: message.readBy,
+                },
+              }
+            : chat
+        );
+
+        // move the updated chat to the top
+        const updatedChat = updatedChatList.find(
+          (chat) => chat.id === message.chatId
+        )!;
+        const remainingChats = updatedChatList.filter(
+          (chat) => chat.id !== message.chatId
+        );
+
+        return [updatedChat, ...remainingChats];
+      });
+    });
+
     return () => {
       socket.off("chats");
       socket.off("receive_private_notification");
@@ -244,6 +306,8 @@ const ChatList = ({
       socket.off("history_message_seen");
       socket.off("message_seen");
       socket.off("chat_created");
+      socket.off("message_deleted_private_list");
+      socket.off("message_deleted_private_notification");
     };
   }, [user]);
 

@@ -3,7 +3,7 @@ export interface IMessage {
   chatId: string;
   from: string;
   message: string;
-  status: "sent" | "seen";
+  status: "sent" | "seen" | "deleted";
   readBy: string[];
   createdAt: string;
 }
