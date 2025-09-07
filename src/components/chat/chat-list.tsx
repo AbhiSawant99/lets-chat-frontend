@@ -49,7 +49,7 @@ const ChatList = ({
       <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <Avatar
           alt={chat.username}
-          src={`${getImageUrl(chat.photo)}`}
+          src={`${getImageUrl(chat.photo)}` || "/default-avatar.png"}
           sx={{ width: "2rem", height: "2rem" }}
           slotProps={{
             img: {

@@ -1,9 +1,10 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-import { StrictMode } from "react";
+import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { SnackbarProvider } from "@/components/snackbar-provider/snackbar-provider.tsx";
+import AppLoader from "@/components/app-loader/index.tsx";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -110,10 +111,12 @@ const theme = createTheme({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <SnackbarProvider>
-        <App />
-      </SnackbarProvider>
+      <Suspense fallback={<AppLoader />}>
+        <CssBaseline />
+        <SnackbarProvider>
+          <App />
+        </SnackbarProvider>
+      </Suspense>
     </ThemeProvider>
   </StrictMode>
 );

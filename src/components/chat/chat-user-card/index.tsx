@@ -32,7 +32,7 @@ const ChatUsersCard = ({
         >
           <Avatar
             alt={chat.username}
-            src={`${getImageUrl(chat.photo)}`}
+            src={`${getImageUrl(chat.photo)}` || "/default-avatar.png"}
             sx={{ width: "3.125rem", height: "3.125rem" }}
             slotProps={{
               img: {

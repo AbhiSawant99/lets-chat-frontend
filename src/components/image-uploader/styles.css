@@ -11,3 +11,23 @@
   width: 9.375rem !important;
   height: 9.375rem !important;
 }
+
+.image-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  font-size: 0.85rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+
+.menu-item-icon {
+  font-size: 1.25rem !important;
+}
+
+.delete:hover {
+  color: var(--mui-palette-error-main) !important;
+}

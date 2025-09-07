@@ -17,3 +17,13 @@ export const checkUsernameAvailability = async (username: string) => {
 
   return response;
 };
+
+export const updateUserProfile = async (formData: FormData) => {
+  const response = await request("/user/update-user", {
+    method: "PUT",
+    credentials: "include",
+    body: formData,
+  });
+
+  return response;
+};

@@ -46,7 +46,7 @@ const UsernameForm = () => {
     return () => clearTimeout(delayDebounce);
   }, [username]);
 
-  const changeUserImage = (file: File) => {
+  const changeUserImage = (file: File | null) => {
     setPhoto(file);
   };
 

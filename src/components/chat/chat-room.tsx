@@ -241,7 +241,7 @@ const ChatRoom = ({
           >
             <Avatar
               alt={currentChat.username}
-              src={`${getImageUrl(currentChat.photo)}`}
+              src={`${getImageUrl(currentChat.photo)}` || "/default-avatar.png"}
               sx={{ width: "3.125rem", height: "3.125rem" }}
               slotProps={{
                 img: {

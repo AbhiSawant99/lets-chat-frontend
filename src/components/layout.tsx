@@ -1,5 +1,12 @@
-import { Avatar, Box, Drawer, IconButton, useColorScheme } from "@mui/material";
-import { type ReactNode } from "react";
+import {
+  Avatar,
+  Box,
+  Drawer,
+  IconButton,
+  Popover,
+  useColorScheme,
+} from "@mui/material";
+import { useState, type ReactNode } from "react";
 import SunnyIcon from "@mui/icons-material/Sunny";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -8,11 +15,13 @@ import { LightTooltip } from "@/components/tool-tip";
 import { useAppContext } from "@/components/app-provider/app-context";
 import getImageUrl from "@/api/image-url.api";
 import { useNavigate } from "react-router-dom";
+import Profile from "@/pages/profile";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { user } = useAppContext();
   const { mode, setMode } = useColorScheme();
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleLogout = () => {
     logout();
@@ -22,8 +31,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
     navigate("/");
   };
 
-  const handleAvatarOnlick = () => {
-    navigate("/profile");
+  const handleAvatarOnlick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
   return (
@@ -57,7 +66,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             <LightTooltip title="Profile" placement="right">
               <Avatar
                 alt={user?.displayName}
-                src={`${getImageUrl(user?.photo)}`}
+                src={`${getImageUrl(user?.photo)}` || "/default-avatar.png"}
                 className="layout-user-profile"
                 slotProps={{
                   img: {
@@ -106,6 +115,21 @@ const Layout = ({ children }: { children: ReactNode }) => {
         </Box>
       </Drawer>
       <Box sx={{ width: "100%", padding: "0.75rem" }}>{children}</Box>
+      {/* Popover containing form */}
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        PaperProps={{
+          sx: { width: "400px", p: 2, borderRadius: 2 }, // form size
+        }}
+      >
+        <Profile onClose={() => setAnchorEl(null)} />
+      </Popover>
     </Box>
   );
 };
