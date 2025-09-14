@@ -41,6 +41,8 @@ export const requestSaveDetails = async (payload: FormData) => {
 };
 
 export const logout = async () => {
+  localStorage.removeItem("user");
+  window.location.href = "/";
   const response = await request("/auth/logout", {
     method: "POST",
     credentials: "include",

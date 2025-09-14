@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/api";
+import { logout } from "@/api/auth.api";
 import { io } from "socket.io-client";
 
 export const socket = io(BASE_URL, {
@@ -8,10 +9,7 @@ export const socket = io(BASE_URL, {
   secure: true,
 });
 
-socket.on("connect_error", (err) => {
-  if (err.message === "TokenExpired") {
-    alert("Session expired. Please login again.");
-    localStorage.removeItem("user");
-    window.location.href = "/";
-  }
+socket.on("connect_error", () => {
+  alert("Session expired. Please login again.");
+  logout();
 });

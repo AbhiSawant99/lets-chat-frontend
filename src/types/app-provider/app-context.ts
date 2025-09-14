@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 export interface IAppContext {
   user?: AuthUser;
-  setUser: (user: AuthUser) => void;
+  setUser: (user: AuthUser | undefined) => void;
   theme?: "light" | "dark";
   toggleTheme: () => void;
 }

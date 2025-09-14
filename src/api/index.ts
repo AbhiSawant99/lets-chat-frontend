@@ -1,4 +1,7 @@
-export const BASE_URL = "https://lets-chat-f1wn.onrender.com";
+import { APIError } from "@/types/app-error";
+
+export const BASE_URL = "http://localhost:3000";
+// "https://lets-chat-f1wn.onrender.com";
 
 async function request(endpoint: string, options: RequestInit = {}) {
   const res = await fetch(`${BASE_URL}${endpoint}`, {
@@ -16,7 +19,8 @@ async function request(endpoint: string, options: RequestInit = {}) {
   }
 
   if (!res.ok) {
-    throw new Error(data?.message || `HTTP ${res.status}`);
+    const message = data?.message || `HTTP ${res.status}`;
+    throw new APIError(res.status, message);
   }
 
   return data;

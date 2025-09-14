@@ -14,21 +14,16 @@ import { logout } from "@/api/auth.api";
 import { LightTooltip } from "@/components/tool-tip";
 import { useAppContext } from "@/components/app-provider/app-context";
 import getImageUrl from "@/api/image-url.api";
-import { useNavigate } from "react-router-dom";
 import Profile from "@/pages/profile";
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const { user } = useAppContext();
+  const { user, setUser } = useAppContext();
   const { mode, setMode } = useColorScheme();
-  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleLogout = () => {
+    setUser(undefined);
     logout();
-
-    localStorage.removeItem("user");
-
-    navigate("/");
   };
 
   const handleAvatarOnlick = (event: React.MouseEvent<HTMLElement>) => {
