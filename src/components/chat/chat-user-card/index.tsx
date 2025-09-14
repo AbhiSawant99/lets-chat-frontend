@@ -1,8 +1,9 @@
-import { Avatar, Badge, Typography } from "@mui/material";
+import { Avatar, Badge, Box, Typography } from "@mui/material";
 import "./styles.css";
 import type { IChat } from "@/types/chat/chat.types";
 import type { AuthUser } from "@/types/app-provider/app-context";
 import getImageUrl from "@/api/image-url.api";
+import MarkChatUnreadIcon from "@mui/icons-material/MarkChatUnread";
 
 const ChatUsersCard = ({
   chat,
@@ -54,17 +55,47 @@ const ChatUsersCard = ({
           {chat.username} {self && `(You)`}
         </Typography>
         {chat.lastMessage ? (
-          <Typography
-            variant="caption"
-            noWrap
+          <Box
             sx={{
-              m: 0,
-              lineHeight: 0,
-              fontWeight: `${user?.id && chat.lastMessage?.readBy && !chat.lastMessage?.readBy?.includes(user?.id) ? 900 : 500}`,
+              display: "flex",
+              alignItems: "center",
+              minWidth: 0,
+              width: "100%",
             }}
           >
-            {chat.lastMessage.message}
-          </Typography>
+            <Typography
+              variant="caption"
+              noWrap
+              sx={{
+                flex: 1,
+                minWidth: 0,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                fontWeight:
+                  user?.id &&
+                  chat.lastMessage?.readBy &&
+                  !chat.lastMessage?.readBy?.includes(user?.id)
+                    ? 900
+                    : 500,
+                maxWidth: "100%",
+              }}
+            >
+              {chat.lastMessage.message}
+            </Typography>
+
+            {user?.id &&
+              chat.lastMessage?.readBy &&
+              !chat.lastMessage?.readBy?.includes(user?.id) && (
+                <MarkChatUnreadIcon
+                  sx={{
+                    fontSize: "1rem",
+                    right: "0",
+                    position: "absolute",
+                  }}
+                />
+              )}
+          </Box>
         ) : (
           <Typography variant="caption" sx={{ m: 0, lineHeight: 0 }}>
             Start Chatting
