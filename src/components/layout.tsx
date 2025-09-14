@@ -15,15 +15,18 @@ import { LightTooltip } from "@/components/tool-tip";
 import { useAppContext } from "@/components/app-provider/app-context";
 import getImageUrl from "@/api/image-url.api";
 import Profile from "@/pages/profile";
+import { useNavigate } from "react-router-dom";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { user, setUser } = useAppContext();
+  const navigate = useNavigate();
   const { mode, setMode } = useColorScheme();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleLogout = () => {
-    setUser(undefined);
     logout();
+    navigate("/", { replace: true });
+    setUser(undefined);
   };
 
   const handleAvatarOnlick = (event: React.MouseEvent<HTMLElement>) => {

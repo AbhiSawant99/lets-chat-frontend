@@ -12,12 +12,13 @@ import GoogleIcon from "@mui/icons-material/Google";
 import "./style.css";
 import { useState } from "react";
 import { requestLogin } from "@/api/auth.api";
-import { BASE_URL } from "@/api";
+import request, { BASE_URL } from "@/api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,8 +32,8 @@ const LoginPage = () => {
     try {
       const userData = await requestLogin(email, password);
       localStorage.setItem("user", JSON.stringify(userData.user));
-      setLoading(false);
       navigate(userData.navigate);
+      setLoading(false);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -40,6 +41,29 @@ const LoginPage = () => {
         setError("An unknown error occurred");
       }
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+
+    try {
+      // Hit the /ping endpoint to "wake up" the backend on Render.
+      // This avoids showing Render's default "Starting..." splash screen
+      await request("/ping").catch(() => {});
+
+      // Give the backend a short time (~500ms) to finish waking up
+      setTimeout(() => {
+        window.location.href = `${BASE_URL}/auth/google`;
+      }, 500);
+
+      // (in case the redirect fails or is blocked, the UI won’t stay stuck).
+      setTimeout(() => {
+        setGoogleLoading(false);
+      }, 1000);
+    } catch (err) {
+      console.error("Ping failed", err);
+      setGoogleLoading(false);
     }
   };
 
@@ -111,11 +135,12 @@ const LoginPage = () => {
             <Divider sx={{ flexGrow: 1, bgcolor: "#333" }} />
           </Box>
           <Button
-            href={`${BASE_URL}/auth/google`}
             variant="outlined"
             fullWidth
             className="google-btn"
+            onClick={handleGoogleLogin}
             startIcon={<GoogleIcon />}
+            loading={googleLoading}
           >
             Login with Google
           </Button>
